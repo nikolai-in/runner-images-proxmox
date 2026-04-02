@@ -1,5 +1,13 @@
+// Windows Server 2025 + VS 2026 Build Configuration
+// 
+// Normal build: packer build -only="windows-2025-vs2026.runner" .
+// Debug build:  packer build -only="windows-2025-vs2026.winrm" -var="winrm_host=IP" .
+
 build {
-  sources = ["source.azure-arm.image"]
+  sources = [
+    "source.proxmox-clone.runner",
+    "source.null.winrm"
+  ]
   name = "windows-2025-vs2026"
 
   provisioner "powershell" {
@@ -91,7 +99,8 @@ build {
       "${path.root}/../scripts/build/Install-DockerWinCred.ps1",
       "${path.root}/../scripts/build/Install-DockerCompose.ps1",
       "${path.root}/../scripts/build/Install-PowershellCore.ps1",
-      "${path.root}/../scripts/build/Install-WebPlatformInstaller.ps1"
+      "${path.root}/../scripts/build/Install-WebPlatformInstaller.ps1",
+      "${path.root}/../scripts/build/Install-Runner.ps1"
     ]
   }
 
