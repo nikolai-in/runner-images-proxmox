@@ -31,7 +31,10 @@ timezone         = "UTC"
 # use underscores (e.g. win25_vs2026) because HCL attribute names cannot contain hyphens.
 image_os      = "win25" # Options: win22, win25, win25-vs2026
 image_version = "dev"
-disk_size_gb  = "256G"
+# disk_size_gb controls the OS disk of the base template, which runner VMs inherit.
+# Default is 150G — sufficient for Windows Server + updates + all runner tooling.
+# Increase to 200G+ if runner builds run out of C:\ space.
+# disk_size_gb = "150G"
 
 # License keys (optional - leave empty for evaluation versions)
 license_keys = {

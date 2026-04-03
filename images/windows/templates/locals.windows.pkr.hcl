@@ -18,7 +18,7 @@ locals {
     "win22" = {
       windows_iso     = "en-us_windows_server_2022_eval_x64fre.iso"
       image_index     = "4"
-      disk_size       = coalesce(var.disk_size_gb, "256G")
+      disk_size       = coalesce(var.disk_size_gb, "150G")
       base_template   = "win22-base"
       runner_template = "win22-runner"
       base_vm_id      = var.vm_ids.win22_base == 0 ? null : var.vm_ids.win22_base

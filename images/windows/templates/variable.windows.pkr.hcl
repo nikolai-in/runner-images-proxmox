@@ -78,8 +78,8 @@ variable "socket" {
 
 variable "disk_size_gb" {
   type        = string
-  description = "The size of the disk, including a unit suffix, such as 10G to indicate 10 gigabytes"
-  default     = "256G"
+  description = "The size of the base image OS disk, including a unit suffix (e.g. '150G'). The runner VM clones from this disk, so it must be large enough for all runner tooling. The effective per-OS default (150G) is set via coalesce() in locals.windows.pkr.hcl."
+  default     = null
 }
 
 variable "bridge" {
