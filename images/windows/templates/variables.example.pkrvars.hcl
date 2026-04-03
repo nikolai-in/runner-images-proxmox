@@ -31,10 +31,15 @@ timezone         = "UTC"
 # use underscores (e.g. win25_vs2026) because HCL attribute names cannot contain hyphens.
 image_os      = "win25" # Options: win22, win25, win25-vs2026
 image_version = "dev"
-# disk_size_gb controls the OS disk of the base template, which runner VMs inherit.
-# Default is 150G — sufficient for Windows Server + updates + all runner tooling.
-# Increase to 200G+ if runner builds run out of C:\ space.
-# disk_size_gb = "150G"
+# disk_size_gb controls the OS disk of the base template (default: 32G).
+# Kept small so the Proxmox template occupies minimal storage.
+# The runner build automatically expands this disk to runner_disk_size_gb.
+# disk_size_gb = "32G"
+
+# runner_disk_size_gb is the final size of the OS disk in the runner template.
+# The runner build calls the Proxmox API to resize scsi0 to this size before
+# installing any tooling. Must be larger than disk_size_gb.
+# runner_disk_size_gb = "200G"
 
 # License keys (optional - leave empty for evaluation versions)
 license_keys = {

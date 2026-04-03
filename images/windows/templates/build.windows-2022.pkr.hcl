@@ -10,6 +10,27 @@ build {
   ]
   name = "windows-2022"
 
+  // Expand the OS disk from the compact 32G base size to the full runner size.
+  // shell-local calls the Proxmox API to resize scsi0; the powershell step
+  // then extends the C: partition inside Windows before any tooling is installed.
+  // Both provisioners are skipped for the null.winrm debug source.
+  provisioner "shell-local" {
+    only = ["proxmox-clone.runner"]
+    environment_vars = [
+      "PROXMOX_URL=${var.proxmox_url}",
+      "PROXMOX_USER=${var.proxmox_user}",
+      "PROXMOX_PASS=${var.proxmox_password}",
+      "PROXMOX_NODE=${var.node}",
+      "DISK_SIZE=${var.runner_disk_size_gb}"
+    ]
+    inline = ["bash '${path.root}/../scripts/build/Resize-RunnerDisk.sh' '${build.ID}'"]
+  }
+
+  provisioner "powershell" {
+    only   = ["proxmox-clone.runner"]
+    script = "${path.root}/../scripts/build/Expand-RunnerDisk.ps1"
+  }
+
   provisioner "powershell" {
     inline = [
       "New-Item -Path ${var.image_folder} -ItemType Directory -Force",

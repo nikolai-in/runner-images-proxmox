@@ -78,8 +78,14 @@ variable "socket" {
 
 variable "disk_size_gb" {
   type        = string
-  description = "The size of the base image OS disk, including a unit suffix (e.g. '150G'). The runner VM clones from this disk, so it must be large enough for all runner tooling. The effective per-OS default (150G) is set via coalesce() in locals.windows.pkr.hcl."
+  description = "Size of the base image OS disk, including a unit suffix (e.g. '32G'). Kept small so the Proxmox template occupies minimal storage. The runner build expands this disk before installing tooling. The effective per-OS default (32G) is set via coalesce() in locals.windows.pkr.hcl."
   default     = null
+}
+
+variable "runner_disk_size_gb" {
+  type        = string
+  description = "Target size of the OS disk after expansion during the runner build, including a unit suffix (e.g. '200G'). Must be larger than disk_size_gb. The runner build calls the Proxmox API to resize scsi0 to this size before installing runner tooling."
+  default     = "200G"
 }
 
 variable "bridge" {
