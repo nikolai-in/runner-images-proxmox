@@ -1,7 +1,7 @@
 // Windows Server 2022 Build Configuration
 // 
-// Normal build: packer build -only="windows-2022.runner" .
-// Debug build:  packer build -only="windows-2022.winrm" -var="winrm_host=IP" .
+// Normal build: packer build -only="windows-2022.proxmox-clone.runner" .
+// Debug build:  packer build -only="windows-2022.null.winrm" -var="winrm_host=IP" .
 
 build {
   sources = [

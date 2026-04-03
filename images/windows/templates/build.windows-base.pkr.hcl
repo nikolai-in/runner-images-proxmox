@@ -1,7 +1,7 @@
 // Windows Base Image Build Configuration
 // 
-// Normal build: packer build -only="${var.image_os}-base.base" .
-// Debug build:  packer build -only="${var.image_os}-base.winrm" -var="winrm_host=IP" .
+// Normal build: packer build -only="${var.image_os}-base.proxmox-iso.base" .
+// Debug build:  packer build -only="${var.image_os}-base.null.winrm" -var="winrm_host=IP" .
 
 build {
   name = "${var.image_os}-base"
