@@ -24,5 +24,5 @@ if ($partition.Size -lt $supportedSize.SizeMax) {
     Resize-Partition -DiskNumber $diskNumber -PartitionNumber $partNumber -Size $supportedSize.SizeMax
     Write-Host "C: drive successfully expanded to ${maxGB} GB"
 } else {
-    Write-Host "C: drive is already at maximum size — no resize needed"
+    Write-Host "C: drive is already at maximum size -- no resize needed"
 }

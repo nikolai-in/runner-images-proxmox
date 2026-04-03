@@ -339,9 +339,11 @@ source "proxmox-clone" "win22-runner" {
   cloud_init_storage_pool = var.cloud_init_storage
 
   // EFI & SECURE BOOT CONFIGURATION
+  // pre_enrolled_keys = false disables Secure Boot on the runner VM so that
+  // bcdedit.exe /set TESTSIGNING ON and other low-level modifications succeed.
   efi_config {
     efi_storage_pool  = var.efi_storage
-    pre_enrolled_keys = true
+    pre_enrolled_keys = false
     efi_type          = "4m"
   }
 
@@ -399,9 +401,11 @@ source "proxmox-clone" "win25-runner" {
   cloud_init_storage_pool = var.cloud_init_storage
 
   // EFI & SECURE BOOT CONFIGURATION
+  // pre_enrolled_keys = false disables Secure Boot on the runner VM so that
+  // bcdedit.exe /set TESTSIGNING ON and other low-level modifications succeed.
   efi_config {
     efi_storage_pool  = var.efi_storage
-    pre_enrolled_keys = true
+    pre_enrolled_keys = false
     efi_type          = "4m"
   }
 
@@ -459,9 +463,11 @@ source "proxmox-clone" "win25-vs2026-runner" {
   cloud_init_storage_pool = var.cloud_init_storage
 
   // EFI & SECURE BOOT CONFIGURATION
+  // pre_enrolled_keys = false disables Secure Boot on the runner VM so that
+  // bcdedit.exe /set TESTSIGNING ON and other low-level modifications succeed.
   efi_config {
     efi_storage_pool  = var.efi_storage
-    pre_enrolled_keys = true
+    pre_enrolled_keys = false
     efi_type          = "4m"
   }
 
