@@ -12,7 +12,6 @@
 ##    - WU download cache:              1-3 GB
 ##    - DISM /StartComponentCleanup:    2-5 GB
 ##    - Temp / Prefetch / Logs:         < 1 GB
-##    - Compact OS (NTFS compression):  3-6 GB (Win25+ only, trade CPU for disk)
 ##    - Zero free space:                reclaims thin-provisioned storage blocks
 ################################################################################
 
@@ -66,17 +65,7 @@ Get-WinEvent -ListLog * -Force -ErrorAction SilentlyContinue | ForEach-Object {
     }
 }
 
-# 7. Compact OS — rewrites the OS files using XPRESS4K/LZX compression.
-# This trades a small amount of CPU overhead for 3-6 GB of disk savings.
-# Enabled on Windows Server 2025 only (matches Invoke-Cleanup.ps1 behaviour).
-$osVersion = [System.Environment]::OSVersion.Version
-if ($osVersion.Build -ge 26100) {
-    Write-Host "Enabling Compact OS compression (Windows Server 2025+)"
-    $compactResult = compact.exe /CompactOS:always
-    Write-Host ($compactResult | Select-Object -Last 3)
-}
-
-# 8. Zero out free disk space so Proxmox thin-provisioned storage can reclaim
+# 7. Zero out free disk space so Proxmox thin-provisioned storage can reclaim
 # blocks. On LVM-thin or directory storage with qcow2, this allows the host
 # to discard pages written to during update/cleanup operations.
 #
