@@ -55,6 +55,4 @@ locals {
       ]
     }
   }
-
-  image_properties = local.image_properties_map[var.image_os]
 }

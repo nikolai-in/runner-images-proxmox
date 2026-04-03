@@ -27,9 +27,6 @@ install_password = "YourSecurePassword123!"
 timezone         = "UTC"
 
 # Image settings
-# Note: image_os uses hyphens (e.g. "win25-vs2026") while vm_ids and license_keys
-# use underscores (e.g. win25_vs2026) because HCL attribute names cannot contain hyphens.
-image_os      = "win25" # Options: win22, win25, win25-vs2026
 image_version = "dev"
 # disk_size_gb controls the OS disk of the base template (default: 32G).
 # Kept small so the Proxmox template occupies minimal storage.

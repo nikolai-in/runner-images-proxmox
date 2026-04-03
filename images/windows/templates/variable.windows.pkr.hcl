@@ -181,14 +181,6 @@ variable "vm_ids" {
   }
 }
 
-variable "image_os" {
-  type    = string
-  default = "win25"
-  validation {
-    condition     = contains(["win22", "win25", "win25-vs2026"], var.image_os)
-    error_message = "The image_os value must be one of: win22, win25, win25-vs2026."
-  }
-}
 variable "image_version" {
   type    = string
   default = "dev"

@@ -1,11 +1,11 @@
 // Windows Server 2022 Build Configuration
-// 
-// Normal build: packer build -only="windows-2022.proxmox-clone.runner" .
+//
+// Normal build: packer build -only="windows-2022.proxmox-clone.win22-runner" .
 // Debug build:  packer build -only="windows-2022.null.winrm" -var="winrm_host=IP" .
 
 build {
   sources = [
-    "source.proxmox-clone.runner",
+    "source.proxmox-clone.win22-runner",
     "source.null.winrm"
   ]
   name = "windows-2022"
@@ -15,7 +15,7 @@ build {
   // then extends the C: partition inside Windows before any tooling is installed.
   // Both provisioners are skipped for the null.winrm debug source.
   provisioner "shell-local" {
-    only = ["proxmox-clone.runner"]
+    only = ["proxmox-clone.win22-runner"]
     environment_vars = [
       "PROXMOX_URL=${var.proxmox_url}",
       "PROXMOX_USER=${var.proxmox_user}",
@@ -27,7 +27,7 @@ build {
   }
 
   provisioner "powershell" {
-    only   = ["proxmox-clone.runner"]
+    only   = ["proxmox-clone.win22-runner"]
     script = "${path.root}/../scripts/build/Expand-RunnerDisk.ps1"
   }
 
@@ -87,7 +87,7 @@ build {
   }
 
   provisioner "powershell" {
-    environment_vars = ["IMAGE_VERSION=${var.image_version}", "IMAGE_OS=${var.image_os}", "AGENT_TOOLSDIRECTORY=${var.agent_tools_directory}", "IMAGEDATA_FILE=${var.imagedata_file}", "IMAGE_FOLDER=${var.image_folder}", "TEMP_DIR=${var.temp_dir}"]
+    environment_vars = ["IMAGE_VERSION=${var.image_version}", "IMAGE_OS=win22", "AGENT_TOOLSDIRECTORY=${var.agent_tools_directory}", "IMAGEDATA_FILE=${var.imagedata_file}", "IMAGE_FOLDER=${var.image_folder}", "TEMP_DIR=${var.temp_dir}"]
     execution_policy = "unrestricted"
     scripts          = [
       "${path.root}/../scripts/build/Configure-WindowsDefender.ps1",
