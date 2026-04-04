@@ -12,6 +12,13 @@ $driveLetter   = "C"
 $partition     = Get-Partition -DriveLetter $driveLetter
 $diskNumber    = $partition.DiskNumber
 $partNumber    = $partition.PartitionNumber
+
+# Force Windows to re-read the disk geometry from the hypervisor.  Without this
+# the Storage stack may report the old (pre-resize) disk size even after the
+# Proxmox resize task has completed.
+Write-Host "  Rescanning disk ${diskNumber} to detect new size..."
+Update-Disk -Number $diskNumber
+
 $supportedSize = Get-PartitionSupportedSize -DiskNumber $diskNumber -PartitionNumber $partNumber
 
 $currentGB = [math]::Round($partition.Size / 1GB, 2)

@@ -30,11 +30,54 @@ CSRF=$(printf '%s' "${AUTH_RESPONSE}" | \
 
 echo "Resizing VM ${VMID} scsi0 to ${DISK_SIZE} on node ${PROXMOX_NODE}"
 
-curl -sf -k -X PUT \
+RESIZE_RESPONSE=$(curl -sf -k -X PUT \
   "${BASE_URL}/api2/json/nodes/${PROXMOX_NODE}/qemu/${VMID}/resize" \
   -b "PVEAuthCookie=${TICKET}" \
   -H "CSRFPreventionToken: ${CSRF}" \
   --data-urlencode "disk=scsi0" \
-  --data-urlencode "size=${DISK_SIZE}"
+  --data-urlencode "size=${DISK_SIZE}")
 
-echo "Disk resize request sent successfully"
+printf '%s' "${RESIZE_RESPONSE}"
+echo ""
+
+UPID=$(printf '%s' "${RESIZE_RESPONSE}" | \
+  python3 -c "import sys,json; print(json.load(sys.stdin)['data'])")
+
+echo "Disk resize request sent successfully (UPID: ${UPID})"
+echo "Waiting for resize task to complete..."
+
+# URL-encode the UPID (colons must be percent-encoded for the path segment)
+UPID_ENCODED=$(python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1], safe=''))" "${UPID}")
+
+POLL_INTERVAL=5
+MAX_WAIT=300   # 5 minutes
+elapsed=0
+
+while true; do
+  TASK_STATUS=$(curl -sf -k \
+    "${BASE_URL}/api2/json/nodes/${PROXMOX_NODE}/tasks/${UPID_ENCODED}/status" \
+    -b "PVEAuthCookie=${TICKET}" | \
+    python3 -c "import sys,json; d=json.load(sys.stdin)['data']; print(d['status'], d.get('exitstatus',''))")
+
+  STATUS=$(echo "${TASK_STATUS}" | awk '{print $1}')
+  EXIT_STATUS=$(echo "${TASK_STATUS}" | awk '{print $2}')
+
+  if [ "${STATUS}" = "stopped" ]; then
+    if [ "${EXIT_STATUS}" = "OK" ]; then
+      echo "Disk resize completed successfully"
+      break
+    else
+      echo "ERROR: Disk resize task failed with exit status: ${EXIT_STATUS}"
+      exit 1
+    fi
+  fi
+
+  elapsed=$((elapsed + POLL_INTERVAL))
+  if [ "${elapsed}" -ge "${MAX_WAIT}" ]; then
+    echo "ERROR: Timed out waiting for disk resize after ${MAX_WAIT}s"
+    exit 1
+  fi
+
+  echo "  Task status: ${STATUS} (${elapsed}s elapsed, retrying in ${POLL_INTERVAL}s...)"
+  sleep "${POLL_INTERVAL}"
+done
