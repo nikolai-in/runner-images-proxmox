@@ -51,6 +51,7 @@ build {
   }
 
   provisioner "file" {
+    generated   = true
     source      = "/tmp/packer-image-files.zip"
     destination = "${var.image_folder}\\image-files.zip"
   }
