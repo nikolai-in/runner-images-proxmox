@@ -44,6 +44,12 @@ function Invoke-PesterTests {
         throw "Unable to find test file '$TestFile' on '$testPath'."
     }
 
+    # [PesterConfiguration] is a Pester v5 class type that only exists after the
+    # module has been imported in the current session.  Each Packer provisioner
+    # script runs in a fresh PowerShell process where Pester is not auto-loaded,
+    # so we import it explicitly here rather than relying on the caller to do so.
+    Import-Module Pester -MinimumVersion 5.0 -ErrorAction Stop
+
     $configuration = [PesterConfiguration] @{
         Run    = @{ Path = $testPath; PassThru = $true }
         Output = @{ Verbosity = "Detailed"; RenderMode = "Plaintext" }
