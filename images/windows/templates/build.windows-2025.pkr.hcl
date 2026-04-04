@@ -43,18 +43,23 @@ build {
     ]
   }
 
-  provisioner "file" {
-    destination = "${var.image_folder}\\"
-    sources     = [
-      "${path.root}/../assets",
-      "${path.root}/../scripts",
-      "${path.root}/../toolsets"
-    ]
+  // Pack all upload sources (assets/, scripts/, toolsets/, software-report-base)
+  // into a single zip archive on the build host.  Uploading one file via WinRM
+  // takes seconds; uploading 150+ small files individually takes ~20 minutes.
+  provisioner "shell-local" {
+    inline = ["bash '${path.root}/../scripts/build/Pack-ImageFiles.sh'"]
   }
 
   provisioner "file" {
-    destination = "${var.image_folder}\\scripts\\docs-gen\\"
-    source      = "${path.root}/../../../helpers/software-report-base"
+    source      = "/tmp/packer-image-files.zip"
+    destination = "${var.image_folder}\\image-files.zip"
+  }
+
+  provisioner "powershell" {
+    inline = [
+      "Expand-Archive -Path '${var.image_folder}\\image-files.zip' -DestinationPath '${var.image_folder}' -Force",
+      "Remove-Item '${var.image_folder}\\image-files.zip'"
+    ]
   }
 
   provisioner "powershell" {

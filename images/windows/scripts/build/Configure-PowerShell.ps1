@@ -38,8 +38,16 @@ Invoke-WithRetry -Description "Install NuGet provider" -Action {
     Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
 }
 
-# Specifies the installation policy
-Set-PSRepository -InstallationPolicy Trusted -Name PSGallery
+# Trust PSGallery so that Install-Module works without prompts.
+# PSGallery can be transiently unreachable, and the NuGet provider bootstrap can
+# unregister it when that happens.  Retry and re-register as needed.
+Invoke-WithRetry -Description "Trust PSGallery" -Action {
+    if (-not (Get-PSRepository -Name PSGallery -ErrorAction SilentlyContinue)) {
+        Write-Host "PSGallery not registered, re-registering with Register-PSRepository -Default..."
+        Register-PSRepository -Default -ErrorAction Stop
+    }
+    Set-PSRepository -InstallationPolicy Trusted -Name PSGallery -ErrorAction Stop
+}
 
 Write-Host 'Warmup PSModuleAnalysisCachePath (speedup first powershell invocation by 20s)'
 $PSModuleAnalysisCachePath = 'C:\PSModuleAnalysisCachePath\ModuleAnalysisCache'
