@@ -63,6 +63,7 @@
     "powershellModules": [
         { "name": "DockerMsftProvider" },
         { "name": "MarkdownPS" },
+        { "name": "PowerHTML" },
         { "name": "Pester" },
         { "name": "PowerShellGet" },
         { "name": "PSScriptAnalyzer" },
