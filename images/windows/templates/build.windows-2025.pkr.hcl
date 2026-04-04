@@ -51,6 +51,8 @@ build {
   }
 
   provisioner "file" {
+    // generated = true skips Packer's pre-build source check; the zip is created
+    // by the shell-local provisioner above and doesn't exist at validation time.
     generated   = true
     source      = "/tmp/packer-image-files.zip"
     destination = "${var.image_folder}\\image-files.zip"
