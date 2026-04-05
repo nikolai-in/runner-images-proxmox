@@ -152,23 +152,6 @@ source "proxmox-clone" "runner" {
     bridge = var.bridge
   }
 
-  // IMAGE FILES ISO - scripts, toolsets, and assets delivered via CD-ROM.
-  // Avoids slow per-file WinRM uploads; the ISO is mounted before the VM
-  // starts and unmounted at the end of the build.
-  additional_iso_files {
-    cd_files = [
-      "${path.root}/../scripts/",
-      "${path.root}/../toolsets/",
-      "${path.root}/../assets/",
-      "${path.root}/../../../helpers/software-report-base/"
-    ]
-    cd_label         = "ImageFiles"
-    iso_storage_pool = var.iso_storage
-    unmount          = true
-    type             = "sata"
-    index            = 0
-  }
-
   // COMMUNICATION CONFIGURATION
   communicator   = "winrm"
   winrm_username = var.install_user
