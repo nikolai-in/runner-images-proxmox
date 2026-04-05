@@ -1,13 +1,13 @@
-// Windows Base Image Build Configuration
+// Windows Server 2022 Base Image Build Configuration
 // 
-// Normal build: packer build -only="${var.image_os}-base.proxmox-iso.base" .
-// Debug build:  packer build -only="${var.image_os}-base.null.winrm" -var="winrm_host=IP" .
+// Normal build: packer build -only="win22-base.proxmox-iso.win22-base" .
+// Debug build:  packer build -only="win22-base.null.winrm" -var="winrm_host=IP" .
 
 build {
-  name = "${var.image_os}-base"
+  name = "win22-base"
 
   sources = [
-    "source.proxmox-iso.base",
+    "source.proxmox-iso.win22-base",
     "source.null.winrm",
   ]
 

@@ -31,25 +31,7 @@ build {
     ]
   }
 
-  // Copy image files from the ImageFiles ISO (additional_iso_files in source block).
-  // The ISO is mounted before the VM starts and contains scripts/, toolsets/, assets/,
-  // and software-report-base/ at the root level.
-  provisioner "powershell" {
-    only = ["proxmox-clone.runner"]
-    inline = [
-      "$cd = (Get-WmiObject Win32_CDROMDrive | Where-Object { $_.VolumeName -eq 'ImageFiles' } | Select-Object -First 1).Drive",
-      "if (-not $cd) { throw 'ImageFiles CD drive not found' }",
-      "Copy-Item \"$cd\\scripts\"   \"${var.image_folder}\\\" -Recurse -Force",
-      "Copy-Item \"$cd\\toolsets\"  \"${var.image_folder}\\\" -Recurse -Force",
-      "Copy-Item \"$cd\\assets\"    \"${var.image_folder}\\\" -Recurse -Force",
-      "New-Item -ItemType Directory -Path \"${var.image_folder}\\scripts\\docs-gen\" -Force | Out-Null",
-      "Copy-Item \"$cd\\software-report-base\" \"${var.image_folder}\\scripts\\docs-gen\\\" -Recurse -Force"
-    ]
-  }
-
-  // Fallback for null.winrm debug builds: upload files via WinRM.
   provisioner "file" {
-    only        = ["null.winrm"]
     destination = "${var.image_folder}\\"
     sources     = [
       "${path.root}/../assets",
@@ -59,7 +41,6 @@ build {
   }
 
   provisioner "file" {
-    only        = ["null.winrm"]
     destination = "${var.image_folder}\\scripts\\docs-gen\\"
     source      = "${path.root}/../../../helpers/software-report-base"
   }
