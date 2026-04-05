@@ -1,38 +1,26 @@
 // Windows Server 2022 Build Configuration
-//
-// Normal build: packer build -only="windows-2022.proxmox-clone.win22-runner" .
+// 
+// Normal build: packer build -only="windows-2022.proxmox-clone.runner" -var="image_os=win22" .
 // Debug build:  packer build -only="windows-2022.null.winrm" -var="winrm_host=IP" .
 
 build {
   sources = [
-    "source.proxmox-clone.win22-runner",
+    "source.proxmox-clone.runner",
     "source.null.winrm"
   ]
   name = "windows-2022"
 
-  // Expand the OS disk from the compact 32G base size to the full runner size.
-  // shell-local calls the Proxmox API to resize scsi0; the powershell step
-  // then extends the C: partition inside Windows before any tooling is installed.
-  // Both provisioners are skipped for the null.winrm debug source.
-  provisioner "shell-local" {
-    only = ["proxmox-clone.win22-runner"]
-    environment_vars = [
-      "PROXMOX_URL=${var.proxmox_url}",
-      "PROXMOX_USER=${var.proxmox_user}",
-      "PROXMOX_PASS=${var.proxmox_password}",
-      "PROXMOX_NODE=${var.node}",
-      "DISK_SIZE=${var.runner_disk_size_gb}"
-    ]
-    inline = ["bash '${path.root}/../scripts/build/Resize-RunnerDisk.sh' '${build.ID}'"]
-  }
-
+  // Expand the C: partition to fill the OS disk size configured by the plugin.
+  // packer-plugin-proxmox (nikolai-in fork, PR #324) sets scsi0 to runner_disk_size_gb
+  // before the VM starts; this step extends the partition inside Windows.
+  // Skipped for the null.winrm debug source.
   provisioner "powershell" {
-    only   = ["proxmox-clone.win22-runner"]
+    only   = ["proxmox-clone.runner"]
     script = "${path.root}/../scripts/build/Expand-RunnerDisk.ps1"
   }
 
   provisioner "powershell" {
-    only   = ["proxmox-clone.win22-runner"]
+    only   = ["proxmox-clone.runner"]
     script = "${path.root}/../scripts/build/Initialize-TempDisk.ps1"
   }
 
@@ -43,26 +31,37 @@ build {
     ]
   }
 
-  // Pack all upload sources (assets/, scripts/, toolsets/, software-report-base)
-  // into a single zip archive on the build host.  Uploading one file via WinRM
-  // takes seconds; uploading 150+ small files individually takes ~20 minutes.
-  provisioner "shell-local" {
-    inline = ["bash '${path.root}/../scripts/build/Pack-ImageFiles.sh'"]
+  // Copy image files from the ImageFiles ISO (additional_iso_files in source block).
+  // The ISO is mounted before the VM starts and contains scripts/, toolsets/, assets/,
+  // and software-report-base/ at the root level.
+  provisioner "powershell" {
+    only = ["proxmox-clone.runner"]
+    inline = [
+      "$cd = (Get-WmiObject Win32_CDROMDrive | Where-Object { $_.VolumeName -eq 'ImageFiles' } | Select-Object -First 1).Drive",
+      "if (-not $cd) { throw 'ImageFiles CD drive not found' }",
+      "Copy-Item \"$cd\\scripts\"   \"${var.image_folder}\\\" -Recurse -Force",
+      "Copy-Item \"$cd\\toolsets\"  \"${var.image_folder}\\\" -Recurse -Force",
+      "Copy-Item \"$cd\\assets\"    \"${var.image_folder}\\\" -Recurse -Force",
+      "New-Item -ItemType Directory -Path \"${var.image_folder}\\scripts\\docs-gen\" -Force | Out-Null",
+      "Copy-Item \"$cd\\software-report-base\" \"${var.image_folder}\\scripts\\docs-gen\\\" -Recurse -Force"
+    ]
+  }
+
+  // Fallback for null.winrm debug builds: upload files via WinRM.
+  provisioner "file" {
+    only        = ["null.winrm"]
+    destination = "${var.image_folder}\\"
+    sources     = [
+      "${path.root}/../assets",
+      "${path.root}/../scripts",
+      "${path.root}/../toolsets"
+    ]
   }
 
   provisioner "file" {
-    // generated = true skips Packer's pre-build source check; the zip is created
-    // by the shell-local provisioner above and doesn't exist at validation time.
-    generated   = true
-    source      = "/tmp/packer-image-files.zip"
-    destination = "${var.image_folder}\\image-files.zip"
-  }
-
-  provisioner "powershell" {
-    inline = [
-      "Expand-Archive -Path '${var.image_folder}\\image-files.zip' -DestinationPath '${var.image_folder}' -Force",
-      "Remove-Item '${var.image_folder}\\image-files.zip'"
-    ]
+    only        = ["null.winrm"]
+    destination = "${var.image_folder}\\scripts\\docs-gen\\"
+    source      = "${path.root}/../../../helpers/software-report-base"
   }
 
   provisioner "powershell" {
@@ -100,7 +99,7 @@ build {
   }
 
   provisioner "powershell" {
-    environment_vars = ["IMAGE_VERSION=${var.image_version}", "IMAGE_OS=win22", "AGENT_TOOLSDIRECTORY=${var.agent_tools_directory}", "IMAGEDATA_FILE=${var.imagedata_file}", "IMAGE_FOLDER=${var.image_folder}", "TEMP_DIR=${var.temp_dir}"]
+    environment_vars = ["IMAGE_VERSION=${var.image_version}", "IMAGE_OS=${var.image_os}", "AGENT_TOOLSDIRECTORY=${var.agent_tools_directory}", "IMAGEDATA_FILE=${var.imagedata_file}", "IMAGE_FOLDER=${var.image_folder}", "TEMP_DIR=${var.temp_dir}"]
     execution_policy = "unrestricted"
     scripts          = [
       "${path.root}/../scripts/build/Configure-WindowsDefender.ps1",

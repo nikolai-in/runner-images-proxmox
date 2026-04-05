@@ -79,18 +79,15 @@ $drives = Get-PSDrive -PSProvider FileSystem |
 
 foreach ($drive in $drives) {
     $zeroFile = Join-Path $drive "zero_$(New-Guid).tmp"
-    $driveObj  = Get-PSDrive -PSProvider FileSystem | Where-Object { $_.Root -eq $drive }
-    $freeGB    = [math]::Round($driveObj.Free / 1GB, 1)
-    Write-Host "  Filling free space on ${drive} (approx. ${freeGB} GB)"
-    $fs = $null
+    Write-Host "  Filling free space on ${drive} (approx. $([math]::Round((Get-PSDrive -PSProvider FileSystem | Where-Object { $_.Root -eq $drive }).Free / 1GB, 1)) GB)"
     try {
-        $fs    = [System.IO.File]::Open($zeroFile, 'Create', 'Write', 'None')
-        $chunk = New-Object byte[] (4MB)
-        while ($true) { $fs.Write($chunk, 0, $chunk.Length) }
-    } catch [System.IO.IOException] {
-        # Disk full — expected; the loop fills all available space
-    } catch {
-        Write-Warning "Unexpected error while zeroing free space on ${drive}: $_"
+        $fs = [System.IO.File]::Open($zeroFile, 'Create', 'Write', 'None')
+        $chunk = New-Object byte[] (4MB)   # 4 MB zero-filled chunks
+        try {
+            while ($true) { $fs.Write($chunk, 0, $chunk.Length) }
+        } catch [System.IO.IOException] {
+            # Disk full — expected
+        }
     } finally {
         if ($null -ne $fs) { $fs.Dispose() }
         Remove-Item $zeroFile -Force -ErrorAction SilentlyContinue

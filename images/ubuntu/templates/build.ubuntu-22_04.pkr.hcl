@@ -1,13 +1,5 @@
-// Ubuntu 22.04 (Jammy) Build Configuration
-//
-// Normal build: packer build -only="ubuntu-22_04.runner" .
-// Debug build:  packer build -only="ubuntu-22_04.ssh" -var="ssh_host=IP" .
-
 build {
-  sources = [
-    "source.proxmox-clone.runner",
-    "source.null.ssh"
-  ]
+  sources = ["source.azure-arm.image"]
   name = "ubuntu-22_04"
 
   provisioner "shell" {
@@ -107,7 +99,6 @@ build {
     execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
     scripts          = [
       "${path.root}/../scripts/build/install-actions-cache.sh",
-      "${path.root}/../scripts/build/install-runner-package.sh",
       "${path.root}/../scripts/build/install-apt-common.sh",
       "${path.root}/../scripts/build/install-azcopy.sh",
       "${path.root}/../scripts/build/install-azure-cli.sh",
@@ -171,7 +162,7 @@ build {
   }
 
   provisioner "shell" {
-    environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}", "DOCKERHUB_LOGIN=${var.dockerhub_login}", "DOCKERHUB_PASSWORD=${var.dockerhub_password}"]
+    environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}"]
     execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
     scripts          = ["${path.root}/../scripts/build/install-docker.sh"]
   }
@@ -198,6 +189,11 @@ build {
     environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}"]
     execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
     scripts          = ["${path.root}/../scripts/build/configure-snap.sh"]
+  }
+
+  provisioner "shell" {
+    execute_command = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
+    script          = "${path.root}/../scripts/build/list-dpkg.sh"
   }
 
   provisioner "shell" {
@@ -236,6 +232,16 @@ build {
     scripts          = ["${path.root}/../scripts/build/configure-system.sh"]
   }
 
+  provisioner "file" {
+    destination = "/tmp/"
+    source      = "${path.root}/../assets/ubuntu2204.conf"
+  }
+
+  provisioner "shell" {
+    execute_command = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
+    inline          = ["mkdir -p /etc/vsts", "cp /tmp/ubuntu2204.conf /etc/vsts/machine_instance.conf"]
+  }
+
   provisioner "shell" {
     environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}"]
     execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
@@ -244,13 +250,7 @@ build {
 
   provisioner "shell" {
     execute_command = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
-    inline          = [
-      "cloud-init clean --logs",
-      "truncate -s 0 /etc/machine-id",
-      "rm -f /var/lib/dbus/machine-id",
-      "export HISTSIZE=0",
-      "sync"
-    ]
+    inline          = ["sleep 30", "/usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync"]
   }
 
 }

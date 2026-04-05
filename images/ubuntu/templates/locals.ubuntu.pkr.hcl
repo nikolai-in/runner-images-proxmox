@@ -1,18 +1,15 @@
 locals {
   image_properties_map = {
-    "ubuntu22" = {
-      base_template   = "ubuntu22-base"
-      runner_template = "ubuntu22-runner"
-      disk_size       = coalesce(var.disk_size_gb, "75G")
-      runner_vm_id    = var.vm_ids.ubuntu22_runner == 0 ? null : var.vm_ids.ubuntu22_runner
-    },
-    "ubuntu24" = {
-      base_template   = "ubuntu24-base"
-      runner_template = "ubuntu24-runner"
-      disk_size       = coalesce(var.disk_size_gb, "75G")
-      runner_vm_id    = var.vm_ids.ubuntu24_runner == 0 ? null : var.vm_ids.ubuntu24_runner
-    }
+      "ubuntu22" = {
+            source_image_marketplace_sku = "canonical:0001-com-ubuntu-server-jammy:22_04-lts-gen2"
+            os_disk_size_gb = 75
+      },
+      "ubuntu24" = {
+            source_image_marketplace_sku = "canonical:ubuntu-24_04-lts:server"
+            os_disk_size_gb = 75
+      }
   }
 
-  image_properties = local.image_properties_map[var.image_os]
+  source_image_marketplace_sku = local.image_properties_map[var.image_os].source_image_marketplace_sku
+  os_disk_size_gb = coalesce(var.os_disk_size_gb, local.image_properties_map[var.image_os].os_disk_size_gb)
 }

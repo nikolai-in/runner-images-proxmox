@@ -1,9 +1,8 @@
 ################################################################################
 ##  File:  Expand-RunnerDisk.ps1
 ##  Desc:  Extend the C: partition to fill the full disk size after the
-##         hypervisor (Proxmox) has resized scsi0 via the API.
-##         Run this as the first in-guest provisioner step in the runner build,
-##         immediately after Resize-RunnerDisk.sh has completed.
+##         packer-plugin-proxmox has configured scsi0 at the target size.
+##         Run this as the first in-guest provisioner step in the runner build.
 ################################################################################
 
 Write-Host "Expanding C: drive partition to fill available disk space"
@@ -12,13 +11,6 @@ $driveLetter   = "C"
 $partition     = Get-Partition -DriveLetter $driveLetter
 $diskNumber    = $partition.DiskNumber
 $partNumber    = $partition.PartitionNumber
-
-# Force Windows to re-read the disk geometry from the hypervisor.  Without this
-# the Storage stack may report the old (pre-resize) disk size even after the
-# Proxmox resize task has completed.
-Write-Host "  Rescanning disk ${diskNumber} to detect new size..."
-Update-Disk -Number $diskNumber
-
 $supportedSize = Get-PartitionSupportedSize -DiskNumber $diskNumber -PartitionNumber $partNumber
 
 $currentGB = [math]::Round($partition.Size / 1GB, 2)
@@ -31,5 +23,5 @@ if ($partition.Size -lt $supportedSize.SizeMax) {
     Resize-Partition -DiskNumber $diskNumber -PartitionNumber $partNumber -Size $supportedSize.SizeMax
     Write-Host "C: drive successfully expanded to ${maxGB} GB"
 } else {
-    Write-Host "C: drive is already at maximum size -- no resize needed"
+    Write-Host "C: drive is already at maximum size — no resize needed"
 }

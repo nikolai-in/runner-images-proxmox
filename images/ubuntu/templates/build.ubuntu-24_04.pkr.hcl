@@ -1,13 +1,5 @@
-// Ubuntu 24.04 (Noble) Build Configuration
-//
-// Normal build: packer build -only="ubuntu-24_04.runner" .
-// Debug build:  packer build -only="ubuntu-24_04.ssh" -var="ssh_host=IP" .
-
 build {
-  sources = [
-    "source.proxmox-clone.runner",
-    "source.null.ssh"
-  ]
+  sources = ["source.azure-arm.image"]
   name = "ubuntu-24_04"
 
   provisioner "shell" {
@@ -107,7 +99,6 @@ provisioner "shell" {
     execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
     scripts          = [
       "${path.root}/../scripts/build/install-actions-cache.sh",
-      "${path.root}/../scripts/build/install-runner-package.sh",
       "${path.root}/../scripts/build/install-apt-common.sh",
       "${path.root}/../scripts/build/install-azcopy.sh",
       "${path.root}/../scripts/build/install-azure-cli.sh",
@@ -160,9 +151,7 @@ provisioner "shell" {
   }
 
   provisioner "shell" {
-    # DOCKERHUB_PULL_IMAGES=NO skips pre-pulling Docker images to reduce build time.
-    # Ubuntu 22.04 pre-pulls images using DockerHub credentials; Ubuntu 24.04 skips pre-pulls.
-    environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}", "DOCKERHUB_PULL_IMAGES=NO"]
+    environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}"]
     execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
     scripts          = ["${path.root}/../scripts/build/install-docker.sh"]
   }
@@ -192,6 +181,11 @@ provisioner "shell" {
   }
 
   provisioner "shell" {
+    execute_command = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
+    script          = "${path.root}/../scripts/build/list-dpkg.sh"
+  }
+
+  provisioner "shell" {
     execute_command   = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
     expect_disconnect = true
     inline            = ["echo 'Reboot VM'", "sudo reboot"]
@@ -199,7 +193,7 @@ provisioner "shell" {
 
   provisioner "shell" {
     execute_command     = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
-    pause_before        = "1m0s"
+    pause_before        = "5m0s"
     scripts             = ["${path.root}/../scripts/build/cleanup.sh"]
     start_retry_timeout = "10m"
   }
@@ -235,13 +229,7 @@ provisioner "shell" {
 
   provisioner "shell" {
     execute_command = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
-    inline          = [
-      "cloud-init clean --logs",
-      "truncate -s 0 /etc/machine-id",
-      "rm -f /var/lib/dbus/machine-id",
-      "export HISTSIZE=0",
-      "sync"
-    ]
+    inline          = ["sleep 30", "/usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync"]
   }
 
 }
