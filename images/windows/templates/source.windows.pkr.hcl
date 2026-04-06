@@ -106,6 +106,7 @@ source "proxmox-iso" "win22-base" {
   winrm_port     = "5986"
   winrm_use_ssl  = true
   winrm_insecure = true
+  tmp_dir        = var.temp_dir
 
   // BOOT CONFIGURATION
   boot         = "order=scsi0"
@@ -208,6 +209,7 @@ source "proxmox-iso" "win25-base" {
   winrm_port     = "5986"
   winrm_use_ssl  = true
   winrm_insecure = true
+  tmp_dir        = var.temp_dir
 
   // BOOT CONFIGURATION
   boot         = "order=scsi0"
@@ -310,6 +312,7 @@ source "proxmox-iso" "win25-vs2026-base" {
   winrm_port     = "5986"
   winrm_use_ssl  = true
   winrm_insecure = true
+  tmp_dir        = var.temp_dir
 
   // BOOT CONFIGURATION
   boot         = "order=scsi0"
@@ -368,6 +371,7 @@ source "proxmox-clone" "runner" {
   winrm_port     = "5986"
   winrm_use_ssl  = true
   winrm_insecure = true
+  tmp_dir        = var.temp_dir
 
   // OS DISK - resized to runner target size using packer-plugin-proxmox index
   // feature (github.com/nikolai-in/proxmox fork, PR #324).  Specifying index = "0"
@@ -406,5 +410,6 @@ source "null" "winrm" {
   winrm_port     = "5986"
   winrm_use_ssl  = true
   winrm_insecure = true
+  tmp_dir        = var.temp_dir
   winrm_host     = var.winrm_host
 }
