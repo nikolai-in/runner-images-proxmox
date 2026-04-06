@@ -14,8 +14,17 @@ build {
   provisioner "windows-restart" {
   }
 
-  provisioner "powershell" {
-    script = "${path.root}/../scripts/build/Install-BaseWindowsUpdates.ps1"
+  // Install Windows Updates using the rgl/packer-plugin-windows-update provisioner.
+  // The provisioner handles multiple update/restart cycles automatically.
+  provisioner "windows-update" {
+    search_criteria = "IsInstalled=0"
+    filters = [
+      "exclude:$_.Title -match 'Preview'",
+      "exclude:$_.Title -match 'Beta'",
+      "exclude:$_.Title -match 'Windows Recovery Environment'",
+      "exclude:$_.InstallationBehavior.CanRequestUserInput",
+      "include:$true",
+    ]
   }
 
   provisioner "windows-restart" {
