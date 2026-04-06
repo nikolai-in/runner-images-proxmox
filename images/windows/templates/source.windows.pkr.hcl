@@ -382,14 +382,6 @@ source "proxmox-clone" "runner" {
     index        = "0"
   }
 
-  // DISK FOR TEMP DIR
-  disks {
-    storage_pool = var.disk_storage
-    type         = "scsi"
-    disk_size    = "128G"
-    cache_mode   = "unsafe"
-    format       = "raw"
-  }
 }
 
 source "null" "winrm" {

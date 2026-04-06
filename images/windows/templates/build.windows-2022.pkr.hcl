@@ -20,11 +20,6 @@ build {
   }
 
   provisioner "powershell" {
-    only   = ["proxmox-clone.runner"]
-    script = "${path.root}/../scripts/build/Initialize-TempDisk.ps1"
-  }
-
-  provisioner "powershell" {
     inline = [
       "New-Item -Path ${var.image_folder} -ItemType Directory -Force",
       "New-Item -Path ${var.temp_dir} -ItemType Directory -Force"
