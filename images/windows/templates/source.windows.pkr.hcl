@@ -1,7 +1,7 @@
 packer {
   required_plugins {
     proxmox = {
-      version = "1.2.3"
+      version = "1.2.4"
       source  = "github.com/nikolai-in/proxmox"
     }
     windows-update = {
@@ -351,14 +351,11 @@ source "proxmox-clone" "runner" {
   memory          = var.memory
   cores           = var.cores
   sockets         = var.socket
-  // Passing "host,flags=+vmx;+svm" explicitly enables nested virtualisation on
-  // both Intel (+vmx) and AMD (+svm) hosts. "host" already passes through all
-  // CPU features, but the explicit flags ensure nested virt is advertised to the
-  // guest even if the Proxmox default CPU model would otherwise omit them.
-  // Prerequisite: nested KVM must be enabled on the Proxmox host, e.g.:
-  //   echo "options kvm_intel nested=1" > /etc/modprobe.d/kvm.conf && update-initramfs -u -k all
-  cpu_type        = "host,flags=+vmx;+svm"
-  scsi_controller = "virtio-scsi-pci"
+  cpu_type        = "host"
+  cpu_flags {
+	  nested_virt = true
+	}
+	scsi_controller = "virtio-scsi-pci"
 
   // NETWORK CONFIGURATION
   network_adapters {
