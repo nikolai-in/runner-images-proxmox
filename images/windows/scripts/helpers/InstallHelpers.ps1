@@ -75,7 +75,7 @@ function Install-Binary {
         } else {
             $fileName = [System.IO.Path]::GetFileNameWithoutExtension([System.IO.Path]::GetRandomFileName()) + ".$Type".ToLower()
         }
-        $filePath = Invoke-DownloadWithRetry -Url $Url -Path "${env:TEMP}\$fileName"
+        $filePath = Invoke-DownloadWithRetry -Url $Url -Path "${env:TEMP_DIR}\$fileName"
     }
 
     if ($PSBoundParameters.ContainsKey('ExpectedSubject')) {
@@ -188,7 +188,7 @@ function Invoke-DownloadWithRetry {
         if ([String]::IsNullOrEmpty($fileName)) {
             $fileName = [System.IO.Path]::GetRandomFileName()
         }
-        $Path = Join-Path -Path "${env:TEMP}" -ChildPath $fileName
+        $Path = Join-Path -Path "${env:TEMP_DIR}" -ChildPath $fileName
     }
 
     Write-Host "Downloading package from $Url to $Path..."
@@ -569,7 +569,7 @@ function Get-GithubReleasesByVersion {
         [switch] $WithAssetsOnly
     )
 
-    $localCacheFile = Join-Path ${env:TEMP} "github-releases_$($Repository -replace "/", "_").json"
+    $localCacheFile = Join-Path ${env:TEMP_DIR} "github-releases_$($Repository -replace "/", "_").json"
 
     if (Test-Path $localCacheFile) {
         $releases = Get-Content $localCacheFile | ConvertFrom-Json
@@ -856,7 +856,7 @@ function Get-ChecksumFromUrl {
         [string] $HashType
     )
 
-    $tempFile = Join-Path -Path $env:TEMP -ChildPath ([System.IO.Path]::GetRandomFileName())
+    $tempFile = Join-Path -Path $env:TEMP_DIR -ChildPath ([System.IO.Path]::GetRandomFileName())
     $checksums = (Invoke-DownloadWithRetry -Url $Url -Path $tempFile | Get-Item | Get-Content) -as [string[]]
     Remove-Item -Path $tempFile
 

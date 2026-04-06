@@ -100,7 +100,7 @@ Describe "ImageMagick" {
 
 Describe "Ninja" {
     BeforeAll {
-        $ninjaProjectPath = $(Join-Path $env:TEMP "ninjaproject")
+        $ninjaProjectPath = $(Join-Path $env:TEMP_DIR "ninjaproject")
         New-item -Path $ninjaProjectPath -ItemType Directory -Force
 @'
 cmake_minimum_required(VERSION 3.10)
