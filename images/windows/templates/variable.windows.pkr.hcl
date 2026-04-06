@@ -216,7 +216,3 @@ variable "winrm_host" {
   default     = null
 }
 
-variable "temp_dir" {
-  type    = string
-  default = "C:\\temp"
-}
