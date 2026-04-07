@@ -1,10 +1,13 @@
 # Install CloudBase-Init
+# Note: This script runs in the base image build context where the ImageHelpers
+# module is not available, so downloads are performed directly with Invoke-WebRequest.
 
 $cloudbaseInitUrl = "https://cloudbase.it/downloads/CloudbaseInitSetup_x64.msi"
 $cloudbaseInitInstaller = "CloudbaseInitSetup_x64.msi"
 
 Write-Output "Downloading CloudBaseInit Software"
-Invoke-DownloadWithRetry -Url $cloudbaseInitUrl -Path $cloudbaseInitInstaller
+$ProgressPreference = 'SilentlyContinue'
+Invoke-WebRequest -Uri $cloudbaseInitUrl -OutFile $cloudbaseInitInstaller -UseBasicParsing
 
 $signature = Get-AuthenticodeSignature -FilePath $cloudbaseInitInstaller
 if ($signature.Status -ne "Valid") {

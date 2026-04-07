@@ -45,9 +45,16 @@ Write-Output "Removing CBS logs"
 Remove-Item "$env:SystemRoot\Logs\CBS\*" -Recurse -Force -ErrorAction SilentlyContinue
 
 # 5. Clear temporary files and Prefetch
+# Note: C:\Windows\Temp ($env:SystemRoot\Temp) is intentionally NOT cleared here.
+# Packer's WinRM communicator uploads its provisioner temp files
+# (packer-ps-env-vars-UUID.ps1, script-UUID.ps1) to that directory for
+# every subsequent provisioner.  Deleting the directory contents while a
+# Packer session is active leaves the next provisioner unable to dot-source
+# its env-vars file, producing a CommandNotFoundException and breaking the
+# build.  The user/profile temp directories ($env:TEMP / $env:TMP) and the
+# Prefetch cache are safe to wipe because Packer does not use them.
 Write-Output "Clearing temporary files"
 @(
-    "$env:SystemRoot\Temp\*",
     "$env:SystemRoot\Prefetch\*",
     "$env:TEMP\*",
     "$env:TMP\*"
