@@ -52,7 +52,9 @@ if (-not (Test-IsWin25)) {
             throw "Docker pull failed with a non-zero exit code ($LastExitCode)"
         }
     }
-    Invoke-PesterTests -TestFile "Docker" -TestName "DockerImages"
+    if ($dockerImages) {
+        Invoke-PesterTests -TestFile "Docker" -TestName "DockerImages"
+    }
 }
 
 Invoke-PesterTests -TestFile "Docker" -TestName "Docker"
