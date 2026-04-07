@@ -101,10 +101,21 @@ build {
     inline = ["Set-Service -Name wlansvc -StartupType Manual", "if ($(Get-Service -Name wlansvc).Status -eq 'Running') { Stop-Service -Name wlansvc}"]
   }
 
+  // Install Docker in its own block so that the PATH registry change made by
+  // install-docker-ce.ps1 is flushed before Install-DockerCompose.ps1 tries
+  // to invoke docker.exe from a new WinRM session.
+  provisioner "powershell" {
+    environment_vars = ["IMAGE_FOLDER=${var.image_folder}", "TEMP_DIR=${var.temp_dir}"]
+    scripts          = ["${path.root}/../scripts/build/Install-Docker.ps1"]
+  }
+
+  provisioner "windows-restart" {
+    restart_timeout = "10m"
+  }
+
   provisioner "powershell" {
     environment_vars = ["IMAGE_FOLDER=${var.image_folder}", "TEMP_DIR=${var.temp_dir}"]
     scripts          = [
-      "${path.root}/../scripts/build/Install-Docker.ps1",
       "${path.root}/../scripts/build/Install-DockerWinCred.ps1",
       "${path.root}/../scripts/build/Install-DockerCompose.ps1",
       "${path.root}/../scripts/build/Install-PowershellCore.ps1",

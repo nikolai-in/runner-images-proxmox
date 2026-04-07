@@ -72,8 +72,12 @@ Write-Host "Enable long path behavior"
 # See https://docs.microsoft.com/en-us/windows/desktop/fileio/naming-a-file#maximum-path-length-limitation
 Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem' -Name 'LongPathsEnabled' -Value 1
 
-# Expand disk size of OS drive
+# Expand disk size of OS drive (skip if the partition is already at maximum size,
+# e.g. when Expand-RunnerDisk.ps1 already resized it on Proxmox)
 $driveLetter = "C"
 $size = Get-PartitionSupportedSize -DriveLetter $driveLetter
-Resize-Partition -DriveLetter $driveLetter -Size $size.SizeMax
+$partition = Get-Partition -DriveLetter $driveLetter
+if ($partition.Size -lt $size.SizeMax) {
+    Resize-Partition -DriveLetter $driveLetter -Size $size.SizeMax
+}
 Get-Volume | Select-Object DriveLetter, SizeRemaining, Size | Sort-Object DriveLetter
