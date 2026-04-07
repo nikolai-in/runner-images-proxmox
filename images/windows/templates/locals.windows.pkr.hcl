@@ -19,7 +19,7 @@ locals {
       windows_iso     = "en-us_windows_server_2022_eval_x64fre.iso"
       image_index     = "4"
       disk_size       = coalesce(var.disk_size_gb, "32G")
-      base_template   = "win22-base"
+      base_template   = "windows-2022-base"
       runner_template = "win22-runner"
       base_vm_id      = var.vm_ids.win22_base == 0 ? null : var.vm_ids.win22_base
       runner_vm_id    = var.vm_ids.win22_runner == 0 ? null : var.vm_ids.win22_runner
@@ -32,7 +32,7 @@ locals {
       windows_iso     = "en-us_windows_server_2025_eval_x64fre.iso"
       image_index     = "4"
       disk_size       = coalesce(var.disk_size_gb, "32G")
-      base_template   = "win25-base"
+      base_template   = "windows-2025-base"
       runner_template = "win25-runner"
       base_vm_id      = var.vm_ids.win25_base == 0 ? null : var.vm_ids.win25_base
       runner_vm_id    = var.vm_ids.win25_runner == 0 ? null : var.vm_ids.win25_runner
@@ -45,7 +45,7 @@ locals {
       windows_iso     = "en-us_windows_server_2025_eval_x64fre.iso"
       image_index     = "4"
       disk_size       = coalesce(var.disk_size_gb, "32G")
-      base_template   = "win25-base"
+      base_template   = "windows-2025-base"
       runner_template = "win25-vs2026-runner"
       base_vm_id      = var.vm_ids.win25_base == 0 ? null : var.vm_ids.win25_base
       runner_vm_id    = var.vm_ids.win25_vs2026_runner == 0 ? null : var.vm_ids.win25_vs2026_runner
