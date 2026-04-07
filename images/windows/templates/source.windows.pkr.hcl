@@ -220,7 +220,7 @@ source "proxmox-iso" "win25-base" {
 source "proxmox-clone" "runner" {
   // PROXMOX CONNECTION CONFIGURATION
   proxmox_url              = var.proxmox_url
-  insecure_skip_tls_verify = true
+  insecure_skip_tls_verify = var.proxmox_insecure
   username                 = var.proxmox_user
   password                 = var.proxmox_password
   node                     = var.node

@@ -58,12 +58,6 @@ variable "memory" {
   default     = 8192
 }
 
-variable "ballooning_minimum" {
-  type        = number
-  description = "Minimum amount of RAM in MB for ballooning"
-  default     = 2048
-}
-
 variable "cores" {
   type        = number
   description = "Amount of CPU cores"
@@ -180,8 +174,7 @@ variable "vm_ids" {
 }
 
 variable "image_os" {
-  type    = string
-  default = ""
+  type = string
   validation {
     condition     = contains(["win22", "win25", "win25-vs2026"], var.image_os)
     error_message = "The image_os value must be one of: win22, win25, win25-vs2026."

@@ -47,7 +47,7 @@ locals {
       disk_size       = coalesce(var.disk_size_gb, "32G")
       base_template   = "win25-base"
       runner_template = "win25-vs2026-runner"
-      base_vm_id      = var.vm_ids.win25_vs2026_base == 0 ? null : var.vm_ids.win25_vs2026_base
+      base_vm_id      = var.vm_ids.win25_base == 0 ? null : var.vm_ids.win25_base
       runner_vm_id    = var.vm_ids.win25_vs2026_runner == 0 ? null : var.vm_ids.win25_vs2026_runner
       license_key     = var.license_keys.win25_vs2026
       driver_paths = [
