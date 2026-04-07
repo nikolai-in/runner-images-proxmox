@@ -189,10 +189,21 @@ source "proxmox-clone" "runner" {
   // absolute path (no ".." components).  Without it the plugin mis-resolves the
   // deep "../../../" traversal and produces a path rooted at "/" on the host.
   additional_iso_files {
+    // abspath() is required for ALL entries.  The proxmox plugin passes these
+    // paths to step_create_cdrom.go's AddFile(), which calls filepath.Split() on
+    // the raw path to derive a "discard prefix".  filepath.Walk() normalises its
+    // results via filepath.Join(), so child paths no longer contain ".." -- the
+    // strings.Replace() used to strip the prefix then fails to match, and every
+    // subdirectory is placed at a deep absolute path inside the ISO root folder
+    // instead of at the intended top-level directory.  The ISO ends up with an
+    // EMPTY top-level directory (e.g. assets/) while actual content is buried at
+    // home/runner/.../images/windows/assets/... within the ISO.  abspath()
+    // normalises ".." away before the path reaches the plugin, so the prefix and
+    // the walked paths agree and the ISO has the correct flat structure.
     cd_files = [
-      "${path.root}/../assets",
-      "${path.root}/../scripts",
-      "${path.root}/../toolsets",
+      abspath("${path.root}/../assets"),
+      abspath("${path.root}/../scripts"),
+      abspath("${path.root}/../toolsets"),
       abspath("${path.root}/../../../helpers/software-report-base")
     ]
     cd_label         = "ImageFiles"
