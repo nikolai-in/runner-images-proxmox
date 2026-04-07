@@ -251,9 +251,9 @@ source "proxmox-clone" "runner" {
   sockets         = var.socket
   cpu_type        = "host"
   cpu_flags {
-	  nested_virt = true
-	}
-	scsi_controller = "virtio-scsi-pci"
+    nested_virt = true
+  }
+  scsi_controller = "virtio-scsi-pci"
 
   // NETWORK CONFIGURATION
   network_adapters {
