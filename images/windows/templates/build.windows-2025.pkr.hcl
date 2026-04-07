@@ -18,6 +18,7 @@ build {
   }
 
   provisioner "file" {
+    only        = ["null.winrm"]
     destination = "${var.image_folder}\\"
     sources     = [
       "${path.root}/../assets",
@@ -27,8 +28,19 @@ build {
   }
 
   provisioner "file" {
+    only        = ["null.winrm"]
     destination = "${var.image_folder}\\scripts\\docs-gen\\"
     source      = "${path.root}/../../../helpers/software-report-base"
+  }
+
+  // For proxmox-clone builds the assets/scripts/toolsets are delivered via the
+  // ImageFiles ISO (additional_iso_files in source.windows.pkr.hcl) instead of
+  // slow WinRM file transfer.  The CD is mounted as a sata drive; we detect it
+  // by its volume label so the drive letter does not need to be hard-coded.
+  provisioner "powershell" {
+    only             = ["proxmox-clone.runner"]
+    environment_vars = ["IMAGE_FOLDER=${var.image_folder}"]
+    script           = "${path.root}/../scripts/build/Copy-ImageFilesFromISO.ps1"
   }
 
   provisioner "powershell" {

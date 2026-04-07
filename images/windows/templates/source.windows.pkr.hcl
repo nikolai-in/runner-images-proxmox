@@ -283,6 +283,30 @@ source "proxmox-clone" "runner" {
     index        = "0"
   }
 
+  // IMAGE FILES ISO - bundles assets/, scripts/, toolsets/, and software-report-base/
+  // into a virtual CD so Packer can deliver them without slow WinRM file transfer.
+  // A powershell provisioner in each runner build copies from this CD to image_folder.
+  additional_iso_files {
+    cd_files = [
+      "${path.root}/../assets",
+      "${path.root}/../scripts",
+      "${path.root}/../toolsets",
+      "${path.root}/../../../helpers/software-report-base"
+    ]
+    cd_label         = "ImageFiles"
+    iso_storage_pool = var.iso_storage
+    // unmount = true removes the virtual CD after all provisioners have finished
+    // (same behavior as the base-image autounattend CD).  The ISO remains mounted
+    // and accessible throughout the entire provisioning phase.
+    unmount          = true
+    type             = "sata"
+    // Both sata slots used by the base build (index 0: autounattend, index 1:
+    // virtio-win) have unmount = true, so the saved base template has no sata
+    // devices.  The clone therefore starts with no sata conflicts; index 1 is
+    // chosen by convention to leave index 0 available for future additions.
+    index            = 1
+  }
+
 }
 
 source "null" "winrm" {
