@@ -184,12 +184,16 @@ source "proxmox-clone" "runner" {
   // IMAGE FILES ISO - bundles assets/, scripts/, toolsets/, and software-report-base/
   // into a virtual CD so Packer can deliver them without slow WinRM file transfer.
   // A powershell provisioner in each runner build copies from this CD to image_folder.
+  //
+  // abspath() normalises the helpers path so the proxmox plugin receives a clean
+  // absolute path (no ".." components).  Without it the plugin mis-resolves the
+  // deep "../../../" traversal and produces a path rooted at "/" on the host.
   additional_iso_files {
     cd_files = [
       "${path.root}/../assets",
       "${path.root}/../scripts",
       "${path.root}/../toolsets",
-      "${path.root}/../../../helpers/software-report-base"
+      abspath("${path.root}/../../../helpers/software-report-base")
     ]
     cd_label         = "ImageFiles"
     iso_storage_pool = var.iso_storage
