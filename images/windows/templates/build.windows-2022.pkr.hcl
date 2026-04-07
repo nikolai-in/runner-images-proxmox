@@ -37,14 +37,18 @@ build {
   // ImageFiles ISO (additional_iso_files in source.windows.pkr.hcl) instead of
   // slow WinRM file transfer.  The CD is mounted as a sata drive; we detect it
   // by its volume label so the drive letter does not need to be hard-coded.
+  //
+  // No 'only' filter here: the script runs for every source but gracefully
+  // no-ops when the ImageFiles volume is absent (null.winrm debug builds
+  // deliver files via WinRM file provisioners instead).
   provisioner "powershell" {
-    only             = ["proxmox-clone.runner"]
     environment_vars = ["IMAGE_FOLDER=${var.image_folder}"]
     script           = "${path.root}/../scripts/build/Copy-ImageFilesFromISO.ps1"
   }
 
   provisioner "powershell" {
     inline = [
+      "$ErrorActionPreference = 'Stop'",
       "Move-Item '${var.image_folder}\\assets\\post-gen' 'C:\\post-generation'",
       "Remove-Item -Recurse '${var.image_folder}\\assets'",
       "Move-Item '${var.image_folder}\\scripts\\docs-gen' '${var.image_folder}\\SoftwareReport'",
