@@ -1,10 +1,10 @@
 // Windows Server 2025 Base Image Build Configuration
 //
-// Normal build: packer build -only="windows-2025-base.proxmox-iso.windows-2025-base" .
-// Debug build:  packer build -only="windows-2025-base.null.winrm" -var="winrm_host=IP" .
+// Normal build: packer build -only="windows-2025-base.proxmox-iso.base" -var="image_os=win25" .
+// Debug build:  packer build -only="windows-2025-base.null.winrm" -var="image_os=win25" -var="winrm_host=IP" .
 
 build {
-  name = "windows-2025"
+  name = "windows-2025-base"
 
   sources = [
     "source.proxmox-iso.base",

@@ -1,4 +1,8 @@
 #!powershell
+# Attribution: Vendored from the Ansible project.
+# Source:      https://github.com/ansible/ansible-documentation/blob/devel/examples/scripts/ConfigureRemotingForAnsible.ps1
+# License:     GNU General Public License v3.0 (GPL-3.0)
+#              https://github.com/ansible/ansible/blob/devel/COPYING
 #Requires -Version 3.0
 
 # Configure a Windows host for remote management with Ansible
