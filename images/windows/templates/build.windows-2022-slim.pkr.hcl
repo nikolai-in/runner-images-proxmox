@@ -55,15 +55,15 @@ build {
     inline = [
       "$ErrorActionPreference = 'Stop'",
       "Move-Item '${var.image_folder}\\assets\\post-gen' 'C:\\post-generation'",
-      "Remove-Item -Recurse '${var.image_folder}\\assets'",
+      "Remove-Item -Recurse -Force '${var.image_folder}\\assets'",
       "Move-Item '${var.image_folder}\\scripts\\docs-gen' '${var.image_folder}\\SoftwareReport'",
       "Move-Item '${var.image_folder}\\scripts\\helpers' '${var.helper_script_folder}\\ImageHelpers'",
       "New-Item -Type Directory -Path '${var.helper_script_folder}\\TestsHelpers\\'",
       "Move-Item '${var.image_folder}\\scripts\\tests\\Helpers.psm1' '${var.helper_script_folder}\\TestsHelpers\\TestsHelpers.psm1'",
       "Move-Item '${var.image_folder}\\scripts\\tests' '${var.image_folder}\\tests'",
-      "Remove-Item -Recurse '${var.image_folder}\\scripts'",
+      "Remove-Item -Recurse -Force '${var.image_folder}\\scripts'",
       "Move-Item '${var.image_folder}\\toolsets\\toolset-2022-slim.json' '${var.image_folder}\\toolset.json'",
-      "Remove-Item -Recurse '${var.image_folder}\\toolsets'"
+      "Remove-Item -Recurse -Force '${var.image_folder}\\toolsets'"
     ]
   }
 
