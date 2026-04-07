@@ -397,3 +397,6 @@ launch.json
 
 # Ignore dynamic template
 images/*/*-temp.json
+
+# Ignore private variables file
+variables.pkrvars.hcl
