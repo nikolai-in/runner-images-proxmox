@@ -1,5 +1,13 @@
+// Windows Server 2022 Build Configuration
+//
+// Normal build: packer build -only="windows-2022.proxmox-clone.runner" -var="image_os=win22" .
+// Debug build:  packer build -only="windows-2022.null.winrm" -var="winrm_host=IP" .
+
 build {
-  sources = ["source.azure-arm.image"]
+  sources = [
+    "source.proxmox-clone.runner",
+    "source.null.winrm"
+  ]
   name = "windows-2022"
 
   provisioner "powershell" {
@@ -91,6 +99,7 @@ build {
       "${path.root}/../scripts/build/Install-DockerCompose.ps1",
       "${path.root}/../scripts/build/Install-PowershellCore.ps1",
       "${path.root}/../scripts/build/Install-WebPlatformInstaller.ps1",
+      "${path.root}/../scripts/build/Install-Runner.ps1",
       "${path.root}/../scripts/build/Install-TortoiseSvn.ps1"
     ]
   }
