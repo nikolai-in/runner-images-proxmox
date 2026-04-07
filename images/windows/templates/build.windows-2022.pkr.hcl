@@ -1,5 +1,13 @@
+// Windows Server 2022 Build Configuration
+//
+// Normal build: packer build -only="windows-2022.proxmox-clone.runner" -var="image_os=win22" .
+// Debug build:  packer build -only="windows-2022.null.winrm" -var="image_os=win22" -var="winrm_host=IP" .
+
 build {
-  sources = ["source.azure-arm.image"]
+  sources = [
+    "source.proxmox-clone.runner",
+    "source.null.winrm"
+  ]
   name = "windows-2022"
 
   provisioner "powershell" {
@@ -10,6 +18,7 @@ build {
   }
 
   provisioner "file" {
+    only        = ["null.winrm"]
     destination = "${var.image_folder}\\"
     sources     = [
       "${path.root}/../assets",
@@ -19,8 +28,19 @@ build {
   }
 
   provisioner "file" {
+    only        = ["null.winrm"]
     destination = "${var.image_folder}\\scripts\\docs-gen\\"
     source      = "${path.root}/../../../helpers/software-report-base"
+  }
+
+  // For proxmox-clone builds the assets/scripts/toolsets are delivered via the
+  // ImageFiles ISO (additional_iso_files in source.windows.pkr.hcl) instead of
+  // slow WinRM file transfer.  The CD is mounted as a sata drive; we detect it
+  // by its volume label so the drive letter does not need to be hard-coded.
+  provisioner "powershell" {
+    only             = ["proxmox-clone.runner"]
+    environment_vars = ["IMAGE_FOLDER=${var.image_folder}"]
+    script           = "${path.root}/../scripts/build/Copy-ImageFilesFromISO.ps1"
   }
 
   provisioner "powershell" {
@@ -91,6 +111,7 @@ build {
       "${path.root}/../scripts/build/Install-DockerCompose.ps1",
       "${path.root}/../scripts/build/Install-PowershellCore.ps1",
       "${path.root}/../scripts/build/Install-WebPlatformInstaller.ps1",
+      "${path.root}/../scripts/build/Install-Runner.ps1",
       "${path.root}/../scripts/build/Install-TortoiseSvn.ps1"
     ]
   }
