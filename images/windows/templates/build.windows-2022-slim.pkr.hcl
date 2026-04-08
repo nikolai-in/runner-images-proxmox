@@ -211,7 +211,7 @@ build {
     scripts          = [
       "${path.root}/../scripts/build/Install-WindowsUpdatesAfterReboot.ps1",
       "${path.root}/../scripts/build/Invoke-Cleanup.ps1",
-      "${path.root}/../scripts/tests/RunAll-Tests.ps1"
+      "${path.root}/../scripts/tests/RunAll-Tests-Slim.ps1"
     ]
   }
 
