@@ -10,6 +10,7 @@
 $ErrorActionPreference = 'Stop'
 
 Import-Module Pester
+Import-Module TestsHelpers
 
 # Refresh environment variables so PATH changes from previous provisioners
 # are visible to the current shell before tests run.
