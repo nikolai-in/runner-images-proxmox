@@ -42,6 +42,6 @@ Copy-Item -Path "$drive\toolsets" -Destination "$env:IMAGE_FOLDER\" -Recurse -Fo
 
 Write-Host "Copy-ImageFilesFromISO: copying software-report-base into scripts\docs-gen..."
 New-Item -ItemType Directory -Path "$env:IMAGE_FOLDER\scripts\docs-gen" -Force | Out-Null
-Copy-Item -Path "$drive\software-report-base\*" -Destination "$env:IMAGE_FOLDER\scripts\docs-gen\" -Recurse -Force -ErrorAction Stop
+Copy-Item -Path "$drive\software-report-base" -Destination "$env:IMAGE_FOLDER\scripts\docs-gen\" -Recurse -Force -ErrorAction Stop
 
 Write-Host "Copy-ImageFilesFromISO: done"
