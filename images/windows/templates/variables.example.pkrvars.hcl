@@ -50,6 +50,7 @@ license_keys = {
 vm_ids = {
   win22_base          = 0 # 1022  # Example: assign specific VM ID
   win22_runner        = 0 # 2022  # Example: assign specific VM ID
+  win22_slim_runner   = 0 # 20221 # Example: assign specific VM ID
   win25_base          = 0 # 1025  # Example: assign specific VM ID
   win25_runner        = 0 # 2025  # Example: assign specific VM ID
   win25_vs2026_runner = 0 # 2026  # Example: assign specific VM ID
