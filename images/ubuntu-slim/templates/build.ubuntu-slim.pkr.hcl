@@ -41,8 +41,8 @@ build {
     ]
     execute_command = "sh -c '{{ .Vars }} {{ .Path }}'"
     scripts = [
-      "${var.installer_script_folder}/build/configure-apt-sources.sh",
-      "${var.installer_script_folder}/build/configure-apt.sh"
+      "${path.root}/../scripts/build/configure-apt-sources.sh",
+      "${path.root}/../scripts/build/configure-apt.sh"
     ]
   }
 
@@ -54,8 +54,8 @@ build {
     ]
     execute_command = "sh -c '{{ .Vars }} {{ .Path }}'"
     scripts = [
-      "${var.installer_script_folder}/build/install-apt-vital.sh",
-      "${var.installer_script_folder}/build/install-ms-repos.sh"
+      "${path.root}/../scripts/build/install-apt-vital.sh",
+      "${path.root}/../scripts/build/install-ms-repos.sh"
     ]
   }
 
@@ -67,7 +67,7 @@ build {
     ]
     execute_command = "sh -c '{{ .Vars }} {{ .Path }}'"
     scripts = [
-      "${var.installer_script_folder}/build/configure-image-data-file.sh"
+      "${path.root}/../scripts/build/configure-image-data-file.sh"
     ]
   }
 
@@ -79,7 +79,7 @@ build {
     ]
     execute_command = "sh -c '{{ .Vars }} {{ .Path }}'"
     scripts = [
-      "${var.installer_script_folder}/build/configure-environment.sh"
+      "${path.root}/../scripts/build/configure-environment.sh"
     ]
   }
 
@@ -91,26 +91,26 @@ build {
     ]
     execute_command = "sh -c '{{ .Vars }} {{ .Path }}'"
     scripts = [
-      "${var.installer_script_folder}/build/install-actions-cache.sh",
-      "${var.installer_script_folder}/build/install-apt-common.sh",
-      "${var.installer_script_folder}/build/install-azcopy.sh",
-      "${var.installer_script_folder}/build/install-azure-cli.sh",
-      "${var.installer_script_folder}/build/install-azure-devops-cli.sh",
-      "${var.installer_script_folder}/build/install-bicep.sh",
-      "${var.installer_script_folder}/build/install-aws-tools.sh",
-      "${var.installer_script_folder}/build/install-git.sh",
-      "${var.installer_script_folder}/build/install-git-lfs.sh",
-      "${var.installer_script_folder}/build/install-github-cli.sh",
-      "${var.installer_script_folder}/build/install-google-cloud-cli.sh",
-      "${var.installer_script_folder}/build/install-nvm.sh",
-      "${var.installer_script_folder}/build/install-nodejs.sh",
-      "${var.installer_script_folder}/build/install-powershell.sh",
-      "${var.installer_script_folder}/build/configure-dpkg.sh",
-      "${var.installer_script_folder}/build/install-yq.sh",
-      "${var.installer_script_folder}/build/install-python.sh",
-      "${var.installer_script_folder}/build/install-zstd.sh",
-      "${var.installer_script_folder}/build/install-pipx-packages.sh",
-      "${var.installer_script_folder}/build/install-docker-cli.sh"
+      "${path.root}/../scripts/build/install-actions-cache.sh",
+      "${path.root}/../scripts/build/install-apt-common.sh",
+      "${path.root}/../scripts/build/install-azcopy.sh",
+      "${path.root}/../scripts/build/install-azure-cli.sh",
+      "${path.root}/../scripts/build/install-azure-devops-cli.sh",
+      "${path.root}/../scripts/build/install-bicep.sh",
+      "${path.root}/../scripts/build/install-aws-tools.sh",
+      "${path.root}/../scripts/build/install-git.sh",
+      "${path.root}/../scripts/build/install-git-lfs.sh",
+      "${path.root}/../scripts/build/install-github-cli.sh",
+      "${path.root}/../scripts/build/install-google-cloud-cli.sh",
+      "${path.root}/../scripts/build/install-nvm.sh",
+      "${path.root}/../scripts/build/install-nodejs.sh",
+      "${path.root}/../scripts/build/install-powershell.sh",
+      "${path.root}/../scripts/build/configure-dpkg.sh",
+      "${path.root}/../scripts/build/install-yq.sh",
+      "${path.root}/../scripts/build/install-python.sh",
+      "${path.root}/../scripts/build/install-zstd.sh",
+      "${path.root}/../scripts/build/install-pipx-packages.sh",
+      "${path.root}/../scripts/build/install-docker-cli.sh"
     ]
   }
 
@@ -121,14 +121,14 @@ build {
     ]
     execute_command = "sh -c '{{ .Vars }} {{ .Path }}'"
     scripts = [
-      "${var.installer_script_folder}/build/configure-system.sh"
+      "${path.root}/../scripts/build/configure-system.sh"
     ]
   }
 
   provisioner "shell" {
     execute_command = "sh -c '{{ .Vars }} {{ .Path }}'"
     scripts = [
-      "${var.helper_script_folder}/cleanup.sh"
+      "${path.root}/../scripts/build/cleanup.sh"
     ]
   }
 }
