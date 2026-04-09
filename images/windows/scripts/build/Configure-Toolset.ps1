@@ -4,6 +4,12 @@
 ##  Desc:  Configure Toolset
 ################################################################################
 
+if ( Test-IsArm64 ) {
+    $envVarTemplate = "GOROOT_{0}_{1}_AARCH64"
+} else {
+    $envVarTemplate = "GOROOT_{0}_{1}_X64"
+}
+
 $toolEnvConfigs = @{
     Python = @{
         pathTemplates = @(
@@ -15,7 +21,7 @@ $toolEnvConfigs = @{
         pathTemplates  = @(
             "{0}\bin"
         )
-        envVarTemplate = "GOROOT_{0}_{1}_X64"
+        envVarTemplate = $envVarTemplate
     }
 }
 
@@ -26,7 +32,7 @@ $tools = Get-ToolsetContent `
 Write-Host "Configure toolset tools environment..."
 foreach ($tool in $tools) {
     $toolEnvConfig = $toolEnvConfigs[$tool.name]
-    
+
     if (-not ([string]::IsNullOrEmpty($toolEnvConfig.envVarTemplate))) {
         foreach ($version in $tool.versions) {
             Write-Host "Set $($tool.name) $version environment variable..."
@@ -49,7 +55,7 @@ foreach ($tool in $tools) {
             Write-Host "Add $toolSystemPath to system PATH..."
             Add-MachinePathItem -PathItem $toolSystemPath | Out-Null
         }
-    
+
         if (-not ([string]::IsNullOrEmpty($tool.defaultVariable))) {
             Write-Host "Set $($tool.name) $($tool.default) $($tool.defaultVariable) environment variable..."
             [Environment]::SetEnvironmentVariable($tool.defaultVariable, $toolVersionPath, "Machine")

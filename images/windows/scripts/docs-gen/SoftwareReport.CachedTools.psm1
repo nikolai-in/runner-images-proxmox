@@ -35,22 +35,11 @@ function Get-ToolcachePyPyVersions {
 
 function Build-CachedToolsSection
 {
-    $nodes = @()
-
-    $goVersions = Get-ToolcacheGoVersions
-    if ($goVersions) { $nodes += [ToolVersionsListNode]::new("Go", @($goVersions), '^\d+\.\d+', 'List') }
-
-    $nodeVersions = Get-ToolcacheNodeVersions
-    if ($nodeVersions) { $nodes += [ToolVersionsListNode]::new("Node.js", @($nodeVersions), '^\d+', 'List') }
-
-    $pythonVersions = Get-ToolcachePythonVersions
-    if ($pythonVersions) { $nodes += [ToolVersionsListNode]::new("Python", @($pythonVersions), '^\d+\.\d+', 'List') }
-
-    $pypyVersions = Get-ToolcachePyPyVersions
-    if ($pypyVersions) { $nodes += [ToolVersionsListNode]::new("PyPy", @($pypyVersions), '^\d+\.\d+', 'List') }
-
-    $rubyVersions = Get-ToolcacheRubyVersions
-    if ($rubyVersions) { $nodes += [ToolVersionsListNode]::new("Ruby", @($rubyVersions), '^\d+\.\d+', 'List') }
-
-    return $nodes
+    return @(
+        [ToolVersionsListNode]::new("Go", $(Get-ToolcacheGoVersions), '^\d+\.\d+', 'List'),
+        [ToolVersionsListNode]::new("Node.js", $(Get-ToolcacheNodeVersions), '^\d+', 'List'),
+        [ToolVersionsListNode]::new("Python", $(Get-ToolcachePythonVersions), '^\d+\.\d+', 'List'),
+        $(if (-not (Test-IsWin11-Arm64)) { [ToolVersionsListNode]::new("PyPy", $(Get-ToolcachePyPyVersions), '^\d+\.\d+', 'List') }),
+        [ToolVersionsListNode]::new("Ruby", $(Get-ToolcacheRubyVersions), '^\d+\.\d+', 'List')
+    ) | Where-Object { $_ }
 }

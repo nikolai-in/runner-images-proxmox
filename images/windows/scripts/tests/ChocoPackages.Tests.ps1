@@ -60,7 +60,7 @@ Describe "Pulumi" -Skip:('pulumi' -notin $chocoPackageNames) {
     }
 }
 
-Describe "Svn" -Skip:((Test-IsWin25) -or (-not (Get-Command svn -ErrorAction SilentlyContinue))) {
+Describe "Svn" -Skip:(-not(Test-IsWin22-X64)) {
     It "svn" {
         "svn --version --quiet" | Should -ReturnZeroExitCode
     }
@@ -88,7 +88,7 @@ Describe "Julia" -Skip:('julia' -notin $chocoPackageNames) {
     }
 }
 
-Describe "CMake" {
+Describe "CMake" -Skip:(Test-IsArm64) {
     It "cmake" {
         "cmake --version" | Should -ReturnZeroExitCode
     }
@@ -100,7 +100,7 @@ Describe "ImageMagick" -Skip:('imagemagick' -notin $chocoPackageNames) {
     }
 }
 
-Describe "Ninja" {
+Describe "Ninja" -Skip:(Test-IsArm64) {
     BeforeAll {
         $ninjaProjectPath = $(Join-Path $env:TEMP_DIR "ninjaproject")
         New-item -Path $ninjaProjectPath -ItemType Directory -Force

@@ -1,4 +1,3 @@
-
 Describe "Azure CLI" -Skip:(-not (Get-Command az -ErrorAction SilentlyContinue)) {
     It "Azure CLI" {
         "az --version" | Should -ReturnZeroExitCode
@@ -11,7 +10,7 @@ Describe "Azure DevOps CLI" -Skip:(-not (Get-Command az -ErrorAction SilentlyCon
     }
 }
 
-Describe "Aliyun CLI" -Skip:((Test-IsWin25) -or (-not (Get-Command aliyun -ErrorAction SilentlyContinue))) {
+Describe "Aliyun CLI" -Skip:(Test-IsWin25-X64) {
     It "Aliyun CLI" {
         "aliyun version" | Should -ReturnZeroExitCode
     }
