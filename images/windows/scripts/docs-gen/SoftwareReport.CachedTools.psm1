@@ -1,20 +1,24 @@
 function Get-ToolcacheGoVersions {
     $toolcachePath = Join-Path $env:AGENT_TOOLSDIRECTORY "Go"
+    if (-not (Test-Path $toolcachePath)) { return @() }
     return Get-ChildItem $toolcachePath -Name | Sort-Object { [Version] $_ }
 }
 
 function Get-ToolcacheNodeVersions {
     $toolcachePath = Join-Path $env:AGENT_TOOLSDIRECTORY "Node"
+    if (-not (Test-Path $toolcachePath)) { return @() }
     return Get-ChildItem $toolcachePath -Name | Sort-Object { [Version] $_ }
 }
 
 function Get-ToolcachePythonVersions {
     $toolcachePath = Join-Path $env:AGENT_TOOLSDIRECTORY "Python"
+    if (-not (Test-Path $toolcachePath)) { return @() }
     return Get-ChildItem $toolcachePath -Name | Sort-Object { [Version] $_ }
 }
 
 function Get-ToolcacheRubyVersions {
     $toolcachePath = Join-Path $env:AGENT_TOOLSDIRECTORY "Ruby"
+    if (-not (Test-Path $toolcachePath)) { return @() }
     return Get-ChildItem $toolcachePath -Name | Sort-Object { [Version] $_ }
 }
 
@@ -31,15 +35,22 @@ function Get-ToolcachePyPyVersions {
 
 function Build-CachedToolsSection
 {
+    $nodes = @()
+
+    $goVersions = Get-ToolcacheGoVersions
+    if ($goVersions) { $nodes += [ToolVersionsListNode]::new("Go", @($goVersions), '^\d+\.\d+', 'List') }
+
+    $nodeVersions = Get-ToolcacheNodeVersions
+    if ($nodeVersions) { $nodes += [ToolVersionsListNode]::new("Node.js", @($nodeVersions), '^\d+', 'List') }
+
+    $pythonVersions = Get-ToolcachePythonVersions
+    if ($pythonVersions) { $nodes += [ToolVersionsListNode]::new("Python", @($pythonVersions), '^\d+\.\d+', 'List') }
+
     $pypyVersions = Get-ToolcachePyPyVersions
-    $nodes = @(
-        [ToolVersionsListNode]::new("Go", $(Get-ToolcacheGoVersions), '^\d+\.\d+', 'List'),
-        [ToolVersionsListNode]::new("Node.js", $(Get-ToolcacheNodeVersions), '^\d+', 'List'),
-        [ToolVersionsListNode]::new("Python", $(Get-ToolcachePythonVersions), '^\d+\.\d+', 'List')
-    )
-    if ($pypyVersions) {
-        $nodes += [ToolVersionsListNode]::new("PyPy", $pypyVersions, '^\d+\.\d+', 'List')
-    }
-    $nodes += [ToolVersionsListNode]::new("Ruby", $(Get-ToolcacheRubyVersions), '^\d+\.\d+', 'List')
+    if ($pypyVersions) { $nodes += [ToolVersionsListNode]::new("PyPy", @($pypyVersions), '^\d+\.\d+', 'List') }
+
+    $rubyVersions = Get-ToolcacheRubyVersions
+    if ($rubyVersions) { $nodes += [ToolVersionsListNode]::new("Ruby", @($rubyVersions), '^\d+\.\d+', 'List') }
+
     return $nodes
 }

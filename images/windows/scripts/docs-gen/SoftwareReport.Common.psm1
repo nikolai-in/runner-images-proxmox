@@ -171,6 +171,12 @@ function Get-SbtVersion {
 
 function Get-DotnetSdks {
     $sdksRawList = dotnet --list-sdks
+    if (-not $sdksRawList) {
+        return [PSCustomObject]@{
+            Versions = @()
+            Path     = ""
+        }
+    }
     $sdkVersions = $sdksRawList | Foreach-Object { $_.Split()[0] }
     $sdkPath = $sdksRawList[0].Split(' ', 2)[1] -replace '\[|]'
     [PSCustomObject]@{
@@ -187,13 +193,18 @@ function Get-DotnetTools {
 
     foreach ($dotnetTool in $dotnetTools) {
         $version = Invoke-Expression $dotnetTool.getversion
-        $toolsList += [ToolVersionNode]::new($dotnetTool.name, $version)
+        if ($version) {
+            $toolsList += [ToolVersionNode]::new($dotnetTool.name, $version)
+        }
     }
     return $toolsList
 }
 
 function Get-DotnetRuntimes {
     $runtimesRawList = dotnet --list-runtimes
+    if (-not $runtimesRawList) {
+        return @()
+    }
     $runtimesRawList | Group-Object { $_.Split()[0] } | ForEach-Object {
         $runtimeName = $_.Name
         $runtimeVersions = $_.Group | Foreach-Object { $_.split()[1] }
@@ -208,12 +219,16 @@ function Get-DotnetRuntimes {
 
 function Get-DotnetFrameworkVersions {
     $path = "${env:ProgramFiles(x86)}\Microsoft SDKs\Windows\*\*\NETFX * Tools"
-    return Get-ChildItem -Path $path -Directory | ForEach-Object { $_.Name | Get-StringPart -Part 1 }
+    return Get-ChildItem -Path $path -Directory -ErrorAction SilentlyContinue | ForEach-Object { $_.Name | Get-StringPart -Part 1 }
 }
 
 function Get-PowerShellAzureModules {
     [Array] $result = @()
     $defaultAzureModuleVersion = "12.5.0"
+
+    if (-not (Test-Path "C:\Modules")) {
+        return $result
+    }
 
     [Array] $azInstalledModules = Get-ChildItem -Path "C:\Modules\az_*" -Directory | ForEach-Object { $_.Name.Split("_")[1] }
     if ($azInstalledModules.Count -gt 0) {
@@ -241,7 +256,9 @@ function Get-PowerShellModules {
     $result += (Get-ToolsetContent).powershellModules.name | Sort-Object | ForEach-Object {
         $moduleName = $_
         $moduleVersions = Get-Module -Name $moduleName -ListAvailable | Select-Object -ExpandProperty Version | Sort-Object -Unique
-        return [ToolVersionsListNode]::new($moduleName, $moduleVersions, '^\d+', "Inline")
+        if ($moduleVersions) {
+            return [ToolVersionsListNode]::new($moduleName, $moduleVersions, '^\d+', "Inline")
+        }
     }
 
     return $result
