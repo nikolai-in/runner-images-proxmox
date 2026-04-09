@@ -31,11 +31,15 @@ function Get-ToolcachePyPyVersions {
 
 function Build-CachedToolsSection
 {
-    return @(
+    $pypyVersions = Get-ToolcachePyPyVersions
+    $nodes = @(
         [ToolVersionsListNode]::new("Go", $(Get-ToolcacheGoVersions), '^\d+\.\d+', 'List'),
         [ToolVersionsListNode]::new("Node.js", $(Get-ToolcacheNodeVersions), '^\d+', 'List'),
-        [ToolVersionsListNode]::new("Python", $(Get-ToolcachePythonVersions), '^\d+\.\d+', 'List'), 
-        [ToolVersionsListNode]::new("PyPy", $(Get-ToolcachePyPyVersions), '^\d+\.\d+', 'List'),
-        [ToolVersionsListNode]::new("Ruby", $(Get-ToolcacheRubyVersions), '^\d+\.\d+', 'List')
+        [ToolVersionsListNode]::new("Python", $(Get-ToolcachePythonVersions), '^\d+\.\d+', 'List')
     )
+    if ($pypyVersions) {
+        $nodes += [ToolVersionsListNode]::new("PyPy", $pypyVersions, '^\d+\.\d+', 'List')
+    }
+    $nodes += [ToolVersionsListNode]::new("Ruby", $(Get-ToolcacheRubyVersions), '^\d+\.\d+', 'List')
+    return $nodes
 }
