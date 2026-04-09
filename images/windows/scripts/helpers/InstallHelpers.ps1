@@ -144,6 +144,66 @@ function Install-Binary {
     }
 }
 
+function Invoke-DownloadFileWithProgress {
+    Param
+    (
+        [Parameter(Mandatory)]
+        [string] $Url,
+        [Parameter(Mandatory)]
+        [string] $Path
+    )
+
+    $request = [System.Net.HttpWebRequest]::Create($Url)
+    $request.AllowAutoRedirect = $true
+    $response = $request.GetResponse()
+
+    try {
+        $totalBytes = $response.ContentLength
+        $responseStream = $response.GetResponseStream()
+        $fileStream = [System.IO.File]::Open($Path, [System.IO.FileMode]::Create)
+
+        try {
+            $buffer = New-Object byte[] 8192
+            $bytesReadTotal = 0
+            $lastReportedPercent = -1
+            $lastReportTime = Get-Date
+
+            while (($bytesRead = $responseStream.Read($buffer, 0, $buffer.Length)) -gt 0) {
+                $fileStream.Write($buffer, 0, $bytesRead)
+                $bytesReadTotal += $bytesRead
+
+                if ($totalBytes -gt 0) {
+                    $percent = [math]::Floor(($bytesReadTotal / $totalBytes) * 100)
+                    if ($percent -ge ($lastReportedPercent + 5)) {
+                        $downloadedMB = [math]::Round($bytesReadTotal / 1MB, 2)
+                        $totalMB = [math]::Round($totalBytes / 1MB, 2)
+                        Write-Host "Download progress: ${percent}% (${downloadedMB} MB / ${totalMB} MB)"
+                        $lastReportedPercent = $percent
+                    }
+                } else {
+                    $elapsed = (Get-Date) - $lastReportTime
+                    if ($elapsed.TotalSeconds -ge 15) {
+                        $downloadedMB = [math]::Round($bytesReadTotal / 1MB, 2)
+                        Write-Host "Download progress: ${downloadedMB} MB"
+                        $lastReportTime = Get-Date
+                    }
+                }
+            }
+        } finally {
+            if ($null -ne $fileStream) {
+                $fileStream.Dispose()
+            }
+            if ($null -ne $responseStream) {
+                $responseStream.Dispose()
+            }
+        }
+    } finally {
+        if ($null -ne $response) {
+            $response.Dispose()
+        }
+    }
+}
+
 function Invoke-DownloadWithRetry {
     <#
     .SYNOPSIS
@@ -198,8 +258,7 @@ function Invoke-DownloadWithRetry {
     for ($retries = 20; $retries -gt 0; $retries--) {
         try {
             $attemptStartTime = Get-Date
-            $ProgressPreference = 'SilentlyContinue'
-            Invoke-WebRequest -Uri $Url -OutFile $Path -UseBasicParsing
+            Invoke-DownloadFileWithProgress -Url $Url -Path $Path
             $attemptSeconds = [math]::Round(($(Get-Date) - $attemptStartTime).TotalSeconds, 2)
             Write-Host "Package downloaded in $attemptSeconds seconds"
             break
@@ -247,7 +306,7 @@ function Get-TCToolPath {
         This function returns the full path of a tool in the tool cache.
 
     .DESCRIPTION
-        The Get-TCToolPath function takes a tool name as a parameter and returns the full path of the tool in the tool cache. 
+        The Get-TCToolPath function takes a tool name as a parameter and returns the full path of the tool in the tool cache.
         It uses the AGENT_TOOLSDIRECTORY environment variable to determine the root path of the tool cache.
 
     .PARAMETER ToolName
@@ -274,7 +333,7 @@ function Get-TCToolVersionPath {
         This function returns the full path of a specific version of a tool in the tool cache.
 
     .DESCRIPTION
-        The Get-TCToolVersionPath function takes a tool name, version, and architecture as parameters and returns the full path of the specified version of the tool in the tool cache. 
+        The Get-TCToolVersionPath function takes a tool name, version, and architecture as parameters and returns the full path of the specified version of the tool in the tool cache.
         It uses the Get-TCToolPath function to get the root path of the tool.
 
     .PARAMETER Name
@@ -891,7 +950,7 @@ function Test-FileChecksum {
         Verifies the checksum of a file.
 
     .DESCRIPTION
-        The Test-FileChecksum function verifies the SHA256 or SHA512 checksum of a file against an expected value. 
+        The Test-FileChecksum function verifies the SHA256 or SHA512 checksum of a file against an expected value.
         If the checksum does not match the expected value, the function throws an error.
 
     .PARAMETER Path
@@ -957,7 +1016,7 @@ function Test-FileSignature {
         Tests the file signature of a given file.
 
     .DESCRIPTION
-        The Test-FileSignature function checks the signature of a file against the expected subject. 
+        The Test-FileSignature function checks the signature of a file against the expected subject.
         It uses the Get-AuthenticodeSignature cmdlet to retrieve the signature information of the file.
         If the signature status is not valid or the subject of the signing certificate does not match the expected subject, an exception is thrown.
 
