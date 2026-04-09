@@ -221,7 +221,7 @@ build {
 
   provisioner "powershell" {
     environment_vars = ["IMAGE_VERSION=${var.image_version}", "IMAGE_FOLDER=${var.image_folder}"]
-    inline           = ["pwsh -File '${var.image_folder}\\SoftwareReport\\Generate-SoftwareReport.ps1'"]
+    inline           = ["pwsh -File '${var.image_folder}\\SoftwareReport\\Generate-SoftwareReport-Slim.ps1'"]
   }
 
   provisioner "powershell" {
