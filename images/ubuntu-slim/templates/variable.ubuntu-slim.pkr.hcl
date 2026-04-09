@@ -61,7 +61,7 @@ variable "lxc_config_file" {
 variable "lxc_template_name" {
   type        = string
   description = "LXC template to use (e.g. ubuntu, debian)"
-  default     = "local"
+  default     = "download"
 }
 
 variable "lxc_template_env" {
