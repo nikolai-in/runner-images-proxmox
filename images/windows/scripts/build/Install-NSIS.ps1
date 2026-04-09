@@ -6,7 +6,7 @@
 
 $nsisVersion = (Get-ToolsetContent).nsis.version
 
-Install-ChocoPackage nsis -ArgumentList "--version", "$nsisVersion"
+Install-ChocoPackage nsis -Version $nsisVersion
 
 Add-MachinePathItem "${env:ProgramFiles(x86)}\NSIS\"
 Update-Environment
