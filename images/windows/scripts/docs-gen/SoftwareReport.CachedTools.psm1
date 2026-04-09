@@ -20,6 +20,7 @@ function Get-ToolcacheRubyVersions {
 
 function Get-ToolcachePyPyVersions {
     $toolcachePath = Join-Path $env:AGENT_TOOLSDIRECTORY "PyPy"
+    if (-not (Test-Path $toolcachePath)) { return @() }
     Get-ChildItem -Path $toolcachePath -Name | Sort-Object { [Version] $_ } | ForEach-Object {
         $pypyRootPath = Join-Path $toolcachePath $_ "x86"
         [string] $pypyVersionOutput = & "$pypyRootPath\python.exe" -c "import sys;print(sys.version)"
