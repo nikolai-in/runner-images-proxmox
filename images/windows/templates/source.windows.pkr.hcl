@@ -94,7 +94,7 @@ source "proxmox-iso" "base" {
     storage_pool = var.disk_storage
     type         = "scsi"
     disk_size    = local.image_properties.disk_size
-    cache_mode   = "writeback"
+    cache_mode   = "unsafe"
     format       = "raw"
   }
 
@@ -176,7 +176,7 @@ source "proxmox-clone" "runner" {
     storage_pool = var.disk_storage
     type         = "scsi"
     disk_size    = var.runner_disk_size_gb
-    cache_mode   = "writeback"
+    cache_mode   = "unsafe"
     format       = "raw"
     index        = "0"
   }
