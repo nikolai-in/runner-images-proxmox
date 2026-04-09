@@ -22,6 +22,10 @@ build {
     ]
   }
 
+  provisioner "powershell" {
+    script = "${path.root}/../scripts/build/Debug-Network.ps1"
+  }
+
   provisioner "file" {
     only        = ["null.winrm"]
     destination = "${var.image_folder}\\"
