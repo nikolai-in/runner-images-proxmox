@@ -128,7 +128,7 @@ build {
   provisioner "shell" {
     execute_command = "sh -c '{{ .Vars }} {{ .Path }}'"
     scripts = [
-      "${path.root}/../scripts/build/cleanup.sh"
+      "${path.root}/../scripts/helpers/cleanup.sh"
     ]
   }
 }
