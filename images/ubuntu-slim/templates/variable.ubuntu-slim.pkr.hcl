@@ -67,7 +67,7 @@ variable "lxc_template_name" {
 variable "lxc_template_env" {
   type        = list(string)
   description = "Environment variables for the LXC template"
-  default     = ["TARBALL=/var/lib/vz/template/cache/ubuntu-24.04-standard_24.04-2_amd64.tar.zst", "SUITE=noble"]
+  default     = ["SUITE=noble"]
 }
 
 
