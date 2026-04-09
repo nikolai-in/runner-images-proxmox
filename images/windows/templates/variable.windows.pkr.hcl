@@ -150,16 +150,18 @@ variable "image_folder" {
 }
 variable "vm_ids" {
   type = object({
-    win22_base        = number
-    win22_runner      = number
-    win25_base        = number
-    win25_runner      = number
+    win22_base          = number
+    win22_runner        = number
+    win22_slim_runner   = number
+    win25_base          = number
+    win25_runner        = number
     win25_vs2026_runner = number
   })
   description = "VM IDs for templates. Set to 0 for auto-assignment by Proxmox. VMIDs must be unique cluster-wide and in range 100-999999999."
   default = {
     win22_base          = 0
     win22_runner        = 0
+    win22_slim_runner   = 0
     win25_base          = 0
     win25_runner        = 0
     win25_vs2026_runner = 0
@@ -176,8 +178,8 @@ variable "vm_ids" {
 variable "image_os" {
   type = string
   validation {
-    condition     = contains(["win22", "win25", "win25-vs2026"], var.image_os)
-    error_message = "The image_os value must be one of: win22, win25, win25-vs2026."
+    condition     = contains(["win22", "win22-slim", "win25", "win25-vs2026"], var.image_os)
+    error_message = "The image_os value must be one of: win22, win22-slim, win25, win25-vs2026."
   }
 }
 

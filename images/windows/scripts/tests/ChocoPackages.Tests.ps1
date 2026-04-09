@@ -1,3 +1,5 @@
+$chocoPackageNames = (Get-ToolsetContent).choco.common_packages | ForEach-Object { $_.name.ToLower() }
+
 Describe "7-Zip" {
     It "7z" {
         "7z" | Should -ReturnZeroExitCode
@@ -10,13 +12,13 @@ Describe "Aria2" {
     }
 }
 
-Describe "AzCopy" {
+Describe "AzCopy" -Skip:('azcopy10' -notin $chocoPackageNames) {
     It "AzCopy" {
         "azcopy --version" | Should -ReturnZeroExitCode
     }
 }
 
-Describe "Bicep" {
+Describe "Bicep" -Skip:('bicep' -notin $chocoPackageNames) {
     It "Bicep" {
         "bicep --version" | Should -ReturnZeroExitCode
     }
@@ -46,19 +48,19 @@ Describe "Packer" {
     }
 }
 
-Describe "Perl" {
+Describe "Perl" -Skip:('strawberryperl' -notin $chocoPackageNames) {
     It "Perl" {
        "perl --version" | Should -ReturnZeroExitCode
     }
 }
 
-Describe "Pulumi" {
+Describe "Pulumi" -Skip:('pulumi' -notin $chocoPackageNames) {
     It "pulumi" {
        "pulumi version" | Should -ReturnZeroExitCode
     }
 }
 
-Describe "Svn" -Skip:(Test-IsWin25) {
+Describe "Svn" -Skip:((Test-IsWin25) -or (-not (Get-Command svn -ErrorAction SilentlyContinue))) {
     It "svn" {
         "svn --version --quiet" | Should -ReturnZeroExitCode
     }
@@ -76,7 +78,7 @@ Describe "VSWhere" {
     }
 }
 
-Describe "Julia" {
+Describe "Julia" -Skip:('julia' -notin $chocoPackageNames) {
     It "Julia path exists" {
         "C:\Julia" | Should -Exist
     }
@@ -92,7 +94,7 @@ Describe "CMake" {
     }
 }
 
-Describe "ImageMagick" {
+Describe "ImageMagick" -Skip:('imagemagick' -notin $chocoPackageNames) {
     It "ImageMagick" {
         "magick -version" | Should -ReturnZeroExitCode
     }

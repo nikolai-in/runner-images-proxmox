@@ -5,6 +5,6 @@
 
 $llvmVersion = (Get-ToolsetContent).llvm.version
 $latestChocoVersion = Resolve-ChocoPackageVersion -PackageName "llvm" -TargetVersion $llvmVersion
-Install-ChocoPackage llvm -ArgumentList '--version', $latestChocoVersion
+Install-ChocoPackage llvm -Version $latestChocoVersion
 
 Invoke-PesterTests -TestFile "LLVM"

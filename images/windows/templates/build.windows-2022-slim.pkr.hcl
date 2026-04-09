@@ -1,20 +1,29 @@
-// Windows Server 2022 Build Configuration
+// Windows Server 2022 Slim Build Configuration
 //
-// Normal build: packer build -only="windows-2022.proxmox-clone.runner" -var="image_os=win22" .
-// Debug build:  packer build -only="windows-2022.null.winrm" -var="image_os=win22" -var="winrm_host=IP" .
+// A trimmed-down image focused on C++ and core CI tooling.
+// Pre-downloaded Docker images and heavyweight VS workloads
+// (game engines, Android, Azure, Teams, Office, VS extensions)
+// are intentionally excluded to reduce image size and build time.
+//
+// Normal build: packer build -only="windows-2022-slim.proxmox-clone.runner" -var="image_os=win22-slim" .
+// Debug build:  packer build -only="windows-2022-slim.null.winrm" -var="image_os=win22-slim" -var="winrm_host=IP" .
 
 build {
   sources = [
     "source.proxmox-clone.runner",
     "source.null.winrm"
   ]
-  name = "windows-2022"
+  name = "windows-2022-slim"
 
   provisioner "powershell" {
     inline = [
       "New-Item -Path ${var.image_folder} -ItemType Directory -Force",
       "New-Item -Path ${var.temp_dir} -ItemType Directory -Force"
     ]
+  }
+
+  provisioner "powershell" {
+    script = "${path.root}/../scripts/build/Debug-Network.ps1"
   }
 
   provisioner "file" {
@@ -57,7 +66,7 @@ build {
       "Move-Item '${var.image_folder}\\scripts\\tests\\Helpers.psm1' '${var.helper_script_folder}\\TestsHelpers\\TestsHelpers.psm1'",
       "Move-Item '${var.image_folder}\\scripts\\tests' '${var.image_folder}\\tests'",
       "Remove-Item -Recurse -Force '${var.image_folder}\\scripts'",
-      "Move-Item '${var.image_folder}\\toolsets\\toolset-2022.json' '${var.image_folder}\\toolset.json'",
+      "Move-Item '${var.image_folder}\\toolsets\\toolset-2022-slim.json' '${var.image_folder}\\toolset.json'",
       "Remove-Item -Recurse -Force '${var.image_folder}\\toolsets'"
     ]
   }
@@ -115,8 +124,7 @@ build {
       "${path.root}/../scripts/build/Install-DockerCompose.ps1",
       "${path.root}/../scripts/build/Install-PowershellCore.ps1",
       "${path.root}/../scripts/build/Install-WebPlatformInstaller.ps1",
-      "${path.root}/../scripts/build/Install-Runner.ps1",
-      "${path.root}/../scripts/build/Install-TortoiseSvn.ps1"
+      "${path.root}/../scripts/build/Install-Runner.ps1"
     ]
   }
 
@@ -128,10 +136,7 @@ build {
     elevated_password = "${var.install_password}"
     elevated_user     = "${var.install_user}"
     environment_vars  = ["IMAGE_FOLDER=${var.image_folder}", "TEMP_DIR=${var.temp_dir}"]
-    scripts           = [
-      "${path.root}/../scripts/build/Install-VisualStudio.ps1",
-      "${path.root}/../scripts/build/Install-KubernetesTools.ps1"
-    ]
+    scripts           = ["${path.root}/../scripts/build/Install-VisualStudio-Slim.ps1"]
     valid_exit_codes  = [0, 3010]
   }
 
@@ -145,29 +150,14 @@ build {
     environment_vars = ["IMAGE_FOLDER=${var.image_folder}", "TEMP_DIR=${var.temp_dir}"]
     scripts          = [
       "${path.root}/../scripts/build/Install-Wix.ps1",
-      "${path.root}/../scripts/build/Install-WDK.ps1",
-      "${path.root}/../scripts/build/Install-VSExtensions.ps1",
-      "${path.root}/../scripts/build/Install-AzureCli.ps1",
-      "${path.root}/../scripts/build/Install-AzureDevOpsCli.ps1",
       "${path.root}/../scripts/build/Install-ChocolateyPackages.ps1",
       "${path.root}/../scripts/build/Install-JavaTools.ps1",
-      "${path.root}/../scripts/build/Install-Kotlin.ps1",
       "${path.root}/../scripts/build/Install-OpenSSL.ps1"
     ]
   }
 
-  provisioner "powershell" {
-    execution_policy = "remotesigned"
-    environment_vars = ["IMAGE_FOLDER=${var.image_folder}", "TEMP_DIR=${var.temp_dir}"]
-    scripts          = ["${path.root}/../scripts/build/Install-ServiceFabricSDK.ps1"]
-  }
-
   provisioner "windows-restart" {
     restart_timeout = "10m"
-  }
-
-  provisioner "windows-shell" {
-    inline = ["wmic product where \"name like '%%microsoft azure powershell%%'\" call uninstall /nointeractive"]
   }
 
   provisioner "powershell" {
@@ -175,48 +165,25 @@ build {
     scripts          = [
       "${path.root}/../scripts/build/Install-ActionsCache.ps1",
       "${path.root}/../scripts/build/Install-Ruby.ps1",
-      "${path.root}/../scripts/build/Install-PyPy.ps1",
       "${path.root}/../scripts/build/Install-Toolset.ps1",
       "${path.root}/../scripts/build/Configure-Toolset.ps1",
       "${path.root}/../scripts/build/Install-NodeJS.ps1",
-      "${path.root}/../scripts/build/Install-AndroidSDK.ps1",
-      "${path.root}/../scripts/build/Install-PowershellAzModules.ps1",
       "${path.root}/../scripts/build/Install-Pipx.ps1",
       "${path.root}/../scripts/build/Install-Git.ps1",
       "${path.root}/../scripts/build/Install-GitHub-CLI.ps1",
-      "${path.root}/../scripts/build/Install-PHP.ps1",
       "${path.root}/../scripts/build/Install-Rust.ps1",
-      "${path.root}/../scripts/build/Install-Sbt.ps1",
       "${path.root}/../scripts/build/Install-Chrome.ps1",
       "${path.root}/../scripts/build/Install-EdgeDriver.ps1",
       "${path.root}/../scripts/build/Install-Firefox.ps1",
       "${path.root}/../scripts/build/Install-Selenium.ps1",
       "${path.root}/../scripts/build/Install-IEWebDriver.ps1",
-      "${path.root}/../scripts/build/Install-Apache.ps1",
-      "${path.root}/../scripts/build/Install-Nginx.ps1",
       "${path.root}/../scripts/build/Install-Msys2.ps1",
-      "${path.root}/../scripts/build/Install-WinAppDriver.ps1",
-      "${path.root}/../scripts/build/Install-R.ps1",
-      "${path.root}/../scripts/build/Install-AWSTools.ps1",
-      "${path.root}/../scripts/build/Install-DACFx.ps1",
-      "${path.root}/../scripts/build/Install-MysqlCli.ps1",
-      "${path.root}/../scripts/build/Install-SQLPowerShellTools.ps1",
-      "${path.root}/../scripts/build/Install-SQLOLEDBDriver.ps1",
       "${path.root}/../scripts/build/Install-DotnetSDK.ps1",
       "${path.root}/../scripts/build/Install-Mingw64.ps1",
-      "${path.root}/../scripts/build/Install-Haskell.ps1",
-      "${path.root}/../scripts/build/Install-Stack.ps1",
-      "${path.root}/../scripts/build/Install-Miniconda.ps1",
-      "${path.root}/../scripts/build/Install-AzureCosmosDbEmulator.ps1",
-      "${path.root}/../scripts/build/Install-Mercurial.ps1",
       "${path.root}/../scripts/build/Install-Zstd.ps1",
       "${path.root}/../scripts/build/Install-NSIS.ps1",
       "${path.root}/../scripts/build/Install-Vcpkg.ps1",
-      "${path.root}/../scripts/build/Install-PostgreSQL.ps1",
-      "${path.root}/../scripts/build/Install-Bazel.ps1",
-      "${path.root}/../scripts/build/Install-AliyunCli.ps1",
       "${path.root}/../scripts/build/Install-RootCA.ps1",
-      "${path.root}/../scripts/build/Install-MongoDB.ps1",
       "${path.root}/../scripts/build/Install-CodeQLBundle.ps1",
       "${path.root}/../scripts/build/Configure-Diagnostics.ps1"
     ]
@@ -248,7 +215,7 @@ build {
     scripts          = [
       "${path.root}/../scripts/build/Install-WindowsUpdatesAfterReboot.ps1",
       "${path.root}/../scripts/build/Invoke-Cleanup.ps1",
-      "${path.root}/../scripts/tests/RunAll-Tests.ps1"
+      "${path.root}/../scripts/tests/RunAll-Tests-Slim.ps1"
     ]
   }
 
@@ -258,7 +225,7 @@ build {
 
   provisioner "powershell" {
     environment_vars = ["IMAGE_VERSION=${var.image_version}", "IMAGE_FOLDER=${var.image_folder}"]
-    inline           = ["pwsh -File '${var.image_folder}\\SoftwareReport\\Generate-SoftwareReport.ps1'"]
+    inline           = ["pwsh -File '${var.image_folder}\\SoftwareReport\\Generate-SoftwareReport-Slim.ps1'"]
   }
 
   provisioner "powershell" {
@@ -266,7 +233,7 @@ build {
   }
 
   provisioner "file" {
-    destination = "${path.root}/../Windows2022-Readme.md"
+    destination = "${path.root}/../Windows2022-Slim-Readme.md"
     direction   = "download"
     source      = "C:\\software-report.md"
   }

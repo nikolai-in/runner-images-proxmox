@@ -1,4 +1,12 @@
-Describe "Azure Cosmos DB Emulator" {
+# Detection variables evaluated at discovery time; used in -Skip conditions below.
+$cosmosDbEmulatorRegKey = Get-ChildItem "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*" |
+    Get-ItemProperty |
+    Where-Object { $_.DisplayName -eq 'Azure Cosmos DB Emulator' }
+$dacFxInstalled        = Test-Path 'C:\Program Files\Microsoft SQL Server\170\DAC\bin\SqlPackage.exe'
+$sqlOleDbInstalled     = Test-Path 'HKLM:\SOFTWARE\Microsoft\MSOLEDBSQL'
+$serviceFabricInstalled = [bool](Get-Module -Name ServiceFabric -ListAvailable -ErrorAction SilentlyContinue)
+
+Describe "Azure Cosmos DB Emulator" -Skip:(-not $cosmosDbEmulatorRegKey) {
     $cosmosDbEmulatorRegKey = Get-ChildItem "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*" | Get-ItemProperty | Where-Object { $_.DisplayName -eq 'Azure Cosmos DB Emulator' }
     $installDir = $cosmosDbEmulatorRegKey.InstallLocation
 
@@ -12,7 +20,7 @@ Describe "Azure Cosmos DB Emulator" {
     }
 }
 
-Describe "Bazel" {
+Describe "Bazel" -Skip:(-not (Get-Command bazel -ErrorAction SilentlyContinue)) {
     It "<ToolName>" -TestCases @(
         @{ ToolName = "bazel" }
         @{ ToolName = "bazelisk" }
@@ -42,13 +50,13 @@ Describe "CodeQL Bundle" {
     }
 }
 
-Describe "R" {
+Describe "R" -Skip:(-not (Get-Command Rscript -ErrorAction SilentlyContinue)) {
     It "Rscript" {
         "Rscript --version" | Should -ReturnZeroExitCode
     }
 }
 
-Describe "DACFx" {
+Describe "DACFx" -Skip:(-not $dacFxInstalled) {
     It "DACFx" {
         (Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*).DisplayName -Contains "Microsoft SQL Server Data-Tier Application Framework" | Should -BeTrue
         $sqlPackagePath = 'C:\Program Files\Microsoft SQL Server\170\DAC\bin\SqlPackage.exe'
@@ -56,13 +64,13 @@ Describe "DACFx" {
     }
 }
 
-Describe "Mercurial" -Skip:(Test-IsWin25) {
+Describe "Mercurial" -Skip:((Test-IsWin25) -or (-not (Get-Command hg -ErrorAction SilentlyContinue))) {
     It "Mercurial" {
         "hg --version" | Should -ReturnZeroExitCode
     }
 }
 
-Describe "KubernetesTools" {
+Describe "KubernetesTools" -Skip:(-not (Get-Command kind -ErrorAction SilentlyContinue)) {
     It "Kind" {
         "kind version" | Should -ReturnZeroExitCode
     }
@@ -112,13 +120,13 @@ Describe "PowerShell Core" {
     }
 }
 
-Describe "Sbt" {
+Describe "Sbt" -Skip:(-not (Get-Command sbt -ErrorAction SilentlyContinue)) {
     It "sbt" {
         "sbt --version" | Should -ReturnZeroExitCode
     }
 }
 
-Describe "ServiceFabricSDK" {
+Describe "ServiceFabricSDK" -Skip:(-not $serviceFabricInstalled) {
     It "PowerShell Module" {
         # Ignore PowerShell version check if running in PowerShell Core
         # https://github.com/microsoft/service-fabric/issues/1343
@@ -134,7 +142,7 @@ Describe "ServiceFabricSDK" {
     }
 }
 
-Describe "Stack" {
+Describe "Stack" -Skip:(-not (Get-Command stack -ErrorAction SilentlyContinue)) {
     It "Stack" {
         "stack --version" | Should -ReturnZeroExitCode
     }
@@ -172,7 +180,7 @@ Describe "Pipx" {
     }
 }
 
-Describe "Kotlin" {
+Describe "Kotlin" -Skip:(-not (Get-Command kotlin -ErrorAction SilentlyContinue)) {
     $kotlinPackages = @("kapt", "kotlin", "kotlinc", "kotlinc-jvm")
 
     It "<toolName> is available" -TestCases ($kotlinPackages | ForEach-Object { @{ toolName = $_ } }) {
@@ -184,7 +192,7 @@ Describe "Kotlin" {
     }
 }
 
-Describe "SQL OLEDB Driver" {
+Describe "SQL OLEDB Driver" -Skip:(-not $sqlOleDbInstalled) {
     It "SQL OLEDB Driver 18" {
         "HKLM:\SOFTWARE\Microsoft\MSOLEDBSQL" | Should -Exist
     }

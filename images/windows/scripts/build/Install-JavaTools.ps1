@@ -113,7 +113,7 @@ Install-ChocoPackage ant -ArgumentList "--ignore-dependencies"
 $toolsetMavenVersion = (Get-ToolsetContent).maven.version
 $versionToInstall = Resolve-ChocoPackageVersion -PackageName "maven" -TargetVersion $toolsetMavenVersion
 
-Install-ChocoPackage maven -ArgumentList "--version=$versionToInstall"
+Install-ChocoPackage maven -Version $versionToInstall
 Install-ChocoPackage gradle
 
 # Add maven env variables to Machine

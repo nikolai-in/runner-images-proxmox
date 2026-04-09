@@ -1,24 +1,24 @@
 
-Describe "Azure CLI" {
+Describe "Azure CLI" -Skip:(-not (Get-Command az -ErrorAction SilentlyContinue)) {
     It "Azure CLI" {
         "az --version" | Should -ReturnZeroExitCode
     }
 }
 
-Describe "Azure DevOps CLI" {
+Describe "Azure DevOps CLI" -Skip:(-not (Get-Command az -ErrorAction SilentlyContinue)) {
     It "az devops" {
         "az devops -h" | Should -ReturnZeroExitCode
     }
 }
 
-Describe "Aliyun CLI" -Skip:(Test-IsWin25) {
+Describe "Aliyun CLI" -Skip:((Test-IsWin25) -or (-not (Get-Command aliyun -ErrorAction SilentlyContinue))) {
     It "Aliyun CLI" {
         "aliyun version" | Should -ReturnZeroExitCode
     }
 }
 
 
-Describe "AWS" {
+Describe "AWS" -Skip:(-not (Get-Command aws -ErrorAction SilentlyContinue)) {
     It "AWS CLI" {
         "aws --version" | Should -ReturnZeroExitCode
     }

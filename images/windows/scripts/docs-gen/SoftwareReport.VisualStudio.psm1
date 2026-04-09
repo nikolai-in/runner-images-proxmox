@@ -51,10 +51,13 @@ function Get-VisualStudioExtensions {
     }
 
     # WDK extension
-    $wdkExtensionVersion = Get-VSExtensionVersion -packageName 'Microsoft.Windows.DriverKit'
-    $wdkExtensions = @(
-        @{Package = 'Windows Driver Kit Visual Studio Extension'; Version = $wdkExtensionVersion }
-    )
+    $wdkExtensionVersion = Get-VSExtensionVersion -packageName 'Microsoft.Windows.DriverKit' -AllowMissing
+    $wdkExtensions = @()
+    if ($wdkExtensionVersion) {
+        $wdkExtensions = @(
+            @{Package = 'Windows Driver Kit Visual Studio Extension'; Version = $wdkExtensionVersion }
+        )
+    }
 
     $extensions = @(
         $vsixs
@@ -70,8 +73,9 @@ function Get-VisualStudioExtensions {
 
 function Get-WindowsSDKs {
     $path = "${env:ProgramFiles(x86)}\Windows Kits\10\Extension SDKs\WindowsDesktop"
+    $versions = if (Test-Path $path) { @((Get-ChildItem $path).Name) } else { @() }
     return [PSCustomObject]@{
         Path     = $path
-        Versions = $(Get-ChildItem $path).Name
+        Versions = $versions
     }
 }

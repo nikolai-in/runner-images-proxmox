@@ -7,7 +7,7 @@
 $installDir = "c:\tools\php"
 $phpMajorMinor = (Get-ToolsetContent).php.version
 $phpVersionToInstall = Resolve-ChocoPackageVersion -PackageName "php" -TargetVersion $phpMajorMinor
-Install-ChocoPackage php -ArgumentList "--params", "/InstallDir:$installDir", "--version=$phpVersionToInstall"
+Install-ChocoPackage php -Version $phpVersionToInstall -ArgumentList "--params", "/InstallDir:$installDir"
 
 # Install latest Composer in chocolatey
 Install-ChocoPackage composer -ArgumentList "--install-args", "/DEV=$installDir /PHP=$installDir"

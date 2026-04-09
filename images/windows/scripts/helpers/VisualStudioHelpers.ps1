@@ -349,7 +349,8 @@ function Get-VSExtensionVersion {
     Param
     (
         [Parameter(Mandatory = $true)]
-        [string] $packageName
+        [string] $packageName,
+        [switch] $AllowMissing
     )
 
     $instanceFolders = Get-ChildItem -Path "C:\ProgramData\Microsoft\VisualStudio\Packages\_Instances"
@@ -366,6 +367,9 @@ function Get-VSExtensionVersion {
 
     if (-not $packageVersion) {
         Write-Host "Installed package $packageName for Visual Studio was not found"
+        if ($AllowMissing) {
+            return $null
+        }
         exit 1
     }
 
