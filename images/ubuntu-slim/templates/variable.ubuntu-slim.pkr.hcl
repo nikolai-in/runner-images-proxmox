@@ -74,6 +74,12 @@ variable "lxc_template_env" {
 
 
 
+variable "lxc_template_parameters" {
+  type        = list(string)
+  description = "Parameters to pass to the LXC template script"
+  default     = ["-d", "ubuntu", "-r", "noble", "-a", "amd64"]
+}
+
 variable "lxc_attach_options" {
   type        = list(string)
   description = "Options passed to lxc-attach"
