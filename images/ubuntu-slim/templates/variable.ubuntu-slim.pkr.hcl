@@ -61,13 +61,13 @@ variable "lxc_config_file" {
 variable "lxc_template_name" {
   type        = string
   description = "LXC template to use (e.g. ubuntu, debian)"
-  default     = "local:vztmpl/ubuntu-24.04-standard_24.04-2_amd64.tar.zst"
+  default     = "local"
 }
 
 variable "lxc_template_env" {
   type        = list(string)
   description = "Environment variables for the LXC template"
-  default     = ["SUITE=noble"]
+  default     = ["TARBALL=/var/lib/vz/template/cache/ubuntu-24.04-standard_24.04-2_amd64.tar.zst", "SUITE=noble"]
 }
 
 
