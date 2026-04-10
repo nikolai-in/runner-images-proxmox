@@ -155,6 +155,7 @@ function Invoke-DownloadFileWithProgress {
 
     $request = [System.Net.HttpWebRequest]::Create($Url)
     $request.AllowAutoRedirect = $true
+    $request.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
     $response = $request.GetResponse()
 
     try {
