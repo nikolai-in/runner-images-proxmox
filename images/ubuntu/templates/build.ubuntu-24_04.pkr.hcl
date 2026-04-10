@@ -1,6 +1,6 @@
 build {
   sources = ["source.proxmox-clone.image"]
-  name = "ubuntu-24_04"
+  name    = "ubuntu-24_04"
 
   provisioner "shell" {
     execute_command = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
@@ -18,9 +18,9 @@ build {
   }
 
   provisioner "shell" {
-    environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}","DEBIAN_FRONTEND=noninteractive"]
+    environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "DEBIAN_FRONTEND=noninteractive"]
     execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
-    scripts          = [
+    scripts = [
       "${path.root}/../scripts/build/install-ms-repos.sh",
       "${path.root}/../scripts/build/configure-apt-sources.sh",
       "${path.root}/../scripts/build/configure-apt.sh"
@@ -39,7 +39,7 @@ build {
 
   provisioner "file" {
     destination = "${var.image_folder}"
-    sources     = [
+    sources = [
       "${path.root}/../assets/post-gen",
       "${path.root}/../scripts/tests",
       "${path.root}/../scripts/docs-gen"
@@ -58,7 +58,7 @@ build {
 
   provisioner "shell" {
     execute_command = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
-    inline          = [
+    inline = [
       "mv ${var.image_folder}/docs-gen ${var.image_folder}/SoftwareReport",
       "mv ${var.image_folder}/post-gen ${var.image_folder}/post-generation"
     ]
@@ -82,7 +82,7 @@ build {
     scripts          = ["${path.root}/../scripts/build/install-apt-vital.sh"]
   }
 
-provisioner "shell" {
+  provisioner "shell" {
     environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}"]
     execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
     scripts          = ["${path.root}/../scripts/build/install-powershell.sh"]
@@ -97,7 +97,7 @@ provisioner "shell" {
   provisioner "shell" {
     environment_vars = ["HELPER_SCRIPTS=${var.helper_script_folder}", "INSTALLER_SCRIPT_FOLDER=${var.installer_script_folder}", "DEBIAN_FRONTEND=noninteractive"]
     execute_command  = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
-    scripts          = [
+    scripts = [
       "${path.root}/../scripts/build/install-actions-cache.sh",
       "${path.root}/../scripts/build/install-apt-common.sh",
       "${path.root}/../scripts/build/install-azcopy.sh",
@@ -229,7 +229,7 @@ provisioner "shell" {
 
   provisioner "shell" {
     execute_command = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
-    inline          = [
+    inline = [
       "sleep 30",
       "if [ -x /usr/sbin/waagent ]; then /usr/sbin/waagent -force -deprovision+user; elif command -v cloud-init >/dev/null 2>&1; then cloud-init clean --logs --seed; fi",
       "export HISTSIZE=0 && sync"
