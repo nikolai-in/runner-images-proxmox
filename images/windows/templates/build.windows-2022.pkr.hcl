@@ -49,15 +49,19 @@ build {
   provisioner "powershell" {
     inline = [
       "$ErrorActionPreference = 'Stop'",
-      "Move-Item '${var.image_folder}\\assets\\post-gen' 'C:\\post-generation'",
+      "if (Test-Path 'C:\\post-generation') { Remove-Item -Recurse -Force 'C:\\post-generation' }",
+      "Move-Item -Force '${var.image_folder}\\assets\\post-gen' 'C:\\post-generation'",
       "Remove-Item -Recurse -Force '${var.image_folder}\\assets'",
-      "Move-Item '${var.image_folder}\\scripts\\docs-gen' '${var.image_folder}\\SoftwareReport'",
-      "Move-Item '${var.image_folder}\\scripts\\helpers' '${var.helper_script_folder}\\ImageHelpers'",
-      "New-Item -Type Directory -Path '${var.helper_script_folder}\\TestsHelpers\\'",
-      "Move-Item '${var.image_folder}\\scripts\\tests\\Helpers.psm1' '${var.helper_script_folder}\\TestsHelpers\\TestsHelpers.psm1'",
-      "Move-Item '${var.image_folder}\\scripts\\tests' '${var.image_folder}\\tests'",
+      "if (Test-Path '${var.image_folder}\\SoftwareReport') { Remove-Item -Recurse -Force '${var.image_folder}\\SoftwareReport' }",
+      "Move-Item -Force '${var.image_folder}\\scripts\\docs-gen' '${var.image_folder}\\SoftwareReport'",
+      "if (Test-Path '${var.helper_script_folder}\\ImageHelpers') { Remove-Item -Recurse -Force '${var.helper_script_folder}\\ImageHelpers' }",
+      "Move-Item -Force '${var.image_folder}\\scripts\\helpers' '${var.helper_script_folder}\\ImageHelpers'",
+      "New-Item -Type Directory -Force -Path '${var.helper_script_folder}\\TestsHelpers\\'",
+      "Move-Item -Force '${var.image_folder}\\scripts\\tests\\Helpers.psm1' '${var.helper_script_folder}\\TestsHelpers\\TestsHelpers.psm1'",
+      "if (Test-Path '${var.image_folder}\\tests') { Remove-Item -Recurse -Force '${var.image_folder}\\tests' }",
+      "Move-Item -Force '${var.image_folder}\\scripts\\tests' '${var.image_folder}\\tests'",
       "Remove-Item -Recurse -Force '${var.image_folder}\\scripts'",
-      "Move-Item '${var.image_folder}\\toolsets\\toolset-2022.json' '${var.image_folder}\\toolset.json'",
+      "Move-Item -Force '${var.image_folder}\\toolsets\\toolset-2022.json' '${var.image_folder}\\toolset.json'",
       "Remove-Item -Recurse -Force '${var.image_folder}\\toolsets'"
     ]
   }
