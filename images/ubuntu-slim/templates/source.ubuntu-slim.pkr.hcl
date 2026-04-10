@@ -10,7 +10,7 @@ packer {
 
 
 source "lxc" "ubuntu_slim" {
-  config_file               = var.lxc_config_file
+  config_file               = "${path.root}/lxc.conf"
   template_name             = var.lxc_template_name
   template_environment_vars = var.lxc_template_env
   template_parameters       = var.lxc_template_parameters

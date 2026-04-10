@@ -21,8 +21,8 @@ echo "APT::Acquire::Retries \"10\";" > /etc/apt/apt.conf.d/80-retries
 echo "APT::Get::Assume-Yes \"true\";" > /etc/apt/apt.conf.d/90assumeyes
 
 # APT understands a field called Phased-Update-Percentage which can be used to control the rollout of a new version. It is an integer between 0 and 100.
-# In case you have multiple systems that you want to receive the same set of updates, 
-# you can set APT::Machine-ID to a UUID such that they all phase the same, 
+# In case you have multiple systems that you want to receive the same set of updates,
+# you can set APT::Machine-ID to a UUID such that they all phase the same,
 # or set APT::Get::Never-Include-Phased-Updates or APT::Get::Always-Include-Phased-Updates to true such that APT will never/always consider phased updates.
 # apt-cache policy pkgname
 echo 'APT::Get::Always-Include-Phased-Updates "true";' > /etc/apt/apt.conf.d/99-phased-updates
@@ -37,10 +37,14 @@ Acquire::BrokenProxy    true;
 EOF
 
 echo 'APT sources'
-if ! is_ubuntu24; then
-    cat /etc/apt/sources.list
+if is_ubuntu24; then
+    if [ -f /etc/apt/sources.list.d/ubuntu.sources ]; then
+        cat /etc/apt/sources.list.d/ubuntu.sources
+    else
+        cat /etc/apt/sources.list
+    fi
 else
-    cat /etc/apt/sources.list.d/ubuntu.sources
+    cat /etc/apt/sources.list
 fi
 
 apt-get update

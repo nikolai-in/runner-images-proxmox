@@ -10,18 +10,18 @@ build {
   }
 
   provisioner "file" {
-    destination = "${var.helper_script_folder}"
-    source      = "${path.root}/../scripts/helpers"
+    destination = "${var.helper_script_folder}/"
+    source      = "${path.root}/../scripts/helpers/"
   }
 
   provisioner "file" {
-    destination = "${var.installer_script_folder}"
-    source      = "${path.root}/../scripts/build"
+    destination = "${var.installer_script_folder}/"
+    source      = "${path.root}/../scripts/build/"
   }
 
   provisioner "file" {
-    destination = "${var.installer_script_folder}"
-    source      = "${path.root}/../toolsets"
+    destination = "${var.installer_script_folder}/"
+    source      = "${path.root}/../toolsets/"
   }
 
   provisioner "shell" {
