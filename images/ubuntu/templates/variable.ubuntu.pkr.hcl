@@ -1,134 +1,98 @@
-// Authentication related variables
-variable "client_cert_path" {
-  type    = string
-  default = "${env("ARM_CLIENT_CERT_PATH")}"
-}
-variable "client_id" {
-  type    = string
-  default = "${env("ARM_CLIENT_ID")}"
-}
-variable "client_secret" {
-  type      = string
-  default   = "${env("ARM_CLIENT_SECRET")}"
-  sensitive = true
-}
-variable "object_id" {
-  type    = string
-  default = "${env("ARM_OBJECT_ID")}"
-}
-variable "oidc_request_token" {
-  type    = string
-  default = ""
-}
-variable "oidc_request_url" {
-  type    = string
-  default = ""
-}
-variable "subscription_id" {
-  type    = string
-  default = "${env("ARM_SUBSCRIPTION_ID")}"
-}
-variable "tenant_id" {
-  type    = string
-  default = "${env("ARM_TENANT_ID")}"
-}
-variable "use_azure_cli_auth" {
-  type    = bool
-  default = false
+// Proxmox related variables
+variable "proxmox_url" {
+  type        = string
+  description = "Proxmox Server URL"
 }
 
-// Azure environment related variables
-variable "allowed_inbound_ip_addresses" {
-  type    = list(string)
-  default = []
+variable "proxmox_insecure" {
+  type        = bool
+  description = "Allow insecure connections to Proxmox"
+  default     = false
 }
-variable "azure_tags" {
-  type    = map(string)
-  default = {}
+
+variable "proxmox_user" {
+  type        = string
+  description = "Proxmox username"
+  sensitive   = true
 }
-variable "build_resource_group_name" {
-  type    = string
-  default = "${env("BUILD_RG_NAME")}"
+
+variable "proxmox_password" {
+  type        = string
+  description = "Proxmox password"
+  sensitive   = true
 }
-variable "gallery_image_name" {
-  type    = string
-  default = "${env("GALLERY_IMAGE_NAME")}"
+
+variable "node" {
+  type        = string
+  description = "Proxmox cluster node"
 }
-variable "gallery_image_version" {
-  type    = string
-  default = "${env("GALLERY_IMAGE_VERSION")}"
+
+variable "iso_storage" {
+  type        = string
+  description = "Proxmox storage location for iso files"
+  default     = "local"
 }
-variable "gallery_name" {
-  type    = string
-  default = "${env("GALLERY_NAME")}"
+
+variable "disk_storage" {
+  type        = string
+  description = "Disk storage location"
+  default     = "local-lvm"
 }
-variable "gallery_resource_group_name" {
-  type    = string
-  default = "${env("GALLERY_RG_NAME")}"
+
+variable "cloud_init_storage" {
+  type        = string
+  description = "Location of cloud-init files/iso/yaml config"
+  default     = "local-lvm"
 }
-variable "gallery_storage_account_type" {
-  type    = string
-  default = "${env("GALLERY_STORAGE_ACCOUNT_TYPE")}"
+
+// VM hardware related variables
+variable "memory" {
+  type        = number
+  description = "Amount of RAM in MB"
+  default     = 8192
 }
-variable "image_os_type" {
-  type    = string
-  default = "Linux"
+
+variable "cores" {
+  type        = number
+  description = "Amount of CPU cores"
+  default     = 2
 }
-variable "location" {
-  type    = string
-  default = ""
+
+variable "socket" {
+  type        = number
+  description = "Amount of CPU sockets"
+  default     = 1
 }
-variable "managed_image_name" {
-  type    = string
-  default = ""
+
+variable "disk_size_gb" {
+  type        = string
+  description = "Target size of the OS disk, including a unit suffix (e.g. '75G')."
+  default     = null
 }
-variable "managed_image_resource_group_name" {
-  type    = string
-  default = "${env("ARM_RESOURCE_GROUP")}"
+
+variable "bridge" {
+  type        = string
+  description = "Network bridge name"
+  default     = "vmbr0"
 }
-variable "managed_image_storage_account_type" {
-  type    = string
-  default = "Premium_LRS"
-}
-variable "private_virtual_network_with_public_ip" {
-  type    = bool
-  default = false
-}
-variable "os_disk_size_gb" {
-  type    = number
-  default = null
-}
-variable "source_image_version" {
-  type    = string
-  default = "latest"
-}
-variable "ssh_clear_authorized_keys" {
-  type    = bool
-  default = true
-}
-variable "temp_resource_group_name" {
-  type    = string
-  default = "${env("TEMP_RESOURCE_GROUP_NAME")}"
-}
-variable "virtual_network_name" {
-  type    = string
-  default = "${env("VNET_NAME")}"
-}
-variable "virtual_network_resource_group_name" {
-  type    = string
-  default = "${env("VNET_RESOURCE_GROUP")}"
-}
-variable "virtual_network_subnet_name" {
-  type    = string
-  default = "${env("VNET_SUBNET")}"
-}
-variable "vm_size" {
-  type    = string
-  default = "Standard_D4s_v4"
-}
-variable "winrm_username" {         // The username used to connect to the VM via WinRM
-    type    = string                // Also applies to the username used to create the VM
-    default = "packer"
+
+variable "vm_ids" {
+  type = object({
+    ubuntu22_runner = number
+    ubuntu24_runner = number
+  })
+  description = "VM IDs for templates. Set to 0 for auto-assignment by Proxmox. VMIDs must be unique cluster-wide and in range 100-999999999."
+  default = {
+    ubuntu22_runner = 0
+    ubuntu24_runner = 0
+  }
+  validation {
+    condition = alltrue([
+      for vm_id in values(var.vm_ids) :
+      vm_id == 0 || (vm_id >= 100 && vm_id <= 999999999)
+    ])
+    error_message = "VM IDs must be between 100 and 999999999, or 0 for auto-assignment."
+  }
 }
 
 // Image related variables
@@ -141,8 +105,11 @@ variable "image_folder" {
   default = "/imagegeneration"
 }
 variable "image_os" {
-  type    = string
-  default = ""
+  type = string
+  validation {
+    condition     = contains(["ubuntu22", "ubuntu24"], var.image_os)
+    error_message = "The image_os value must be one of: ubuntu22, ubuntu24."
+  }
 }
 variable "image_version" {
   type    = string

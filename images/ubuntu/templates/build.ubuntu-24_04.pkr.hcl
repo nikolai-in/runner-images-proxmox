@@ -1,5 +1,5 @@
 build {
-  sources = ["source.azure-arm.image"]
+  sources = ["source.proxmox-clone.image"]
   name = "ubuntu-24_04"
 
   provisioner "shell" {
@@ -229,7 +229,11 @@ provisioner "shell" {
 
   provisioner "shell" {
     execute_command = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
-    inline          = ["sleep 30", "/usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync"]
+    inline          = [
+      "sleep 30",
+      "if [ -x /usr/sbin/waagent ]; then /usr/sbin/waagent -force -deprovision+user; elif command -v cloud-init >/dev/null 2>&1; then cloud-init clean --logs --seed; fi",
+      "export HISTSIZE=0 && sync"
+    ]
   }
 
 }

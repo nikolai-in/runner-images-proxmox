@@ -1,49 +1,54 @@
-source "azure-arm" "image" {
-  client_cert_path                       = var.client_cert_path
-  client_id                              = var.client_id
-  client_secret                          = var.client_secret
-  object_id                              = var.object_id
-  oidc_request_token                     = var.oidc_request_token
-  oidc_request_url                       = var.oidc_request_url
-  subscription_id                        = var.subscription_id
-  tenant_id                              = var.tenant_id
-  use_azure_cli_auth                     = var.use_azure_cli_auth
-
-  allowed_inbound_ip_addresses           = var.allowed_inbound_ip_addresses
-  build_resource_group_name              = var.build_resource_group_name
-  image_publisher                        = split(":", local.source_image_marketplace_sku)[0]
-  image_offer                            = split(":", local.source_image_marketplace_sku)[1]
-  image_sku                              = split(":", local.source_image_marketplace_sku)[2]
-  image_version                          = var.source_image_version
-  location                               = var.location
-  managed_image_name                     = var.managed_image_name
-  managed_image_resource_group_name      = var.managed_image_resource_group_name
-  managed_image_storage_account_type     = var.managed_image_storage_account_type
-  os_disk_size_gb                        = local.os_disk_size_gb
-  os_type                                = var.image_os_type
-  private_virtual_network_with_public_ip = var.private_virtual_network_with_public_ip
-  ssh_clear_authorized_keys              = var.ssh_clear_authorized_keys
-  temp_resource_group_name               = var.temp_resource_group_name
-  virtual_network_name                   = var.virtual_network_name
-  virtual_network_resource_group_name    = var.virtual_network_resource_group_name
-  virtual_network_subnet_name            = var.virtual_network_subnet_name
-  vm_size                                = var.vm_size
-  winrm_username                         = var.winrm_username
-
-  shared_image_gallery_destination {
-    subscription                         = var.subscription_id
-    gallery_name                         = var.gallery_name
-    resource_group                       = var.gallery_resource_group_name
-    image_name                           = var.gallery_image_name
-    image_version                        = var.gallery_image_version
-    storage_account_type                 = var.gallery_storage_account_type
-  }
-
-  dynamic "azure_tag" {
-    for_each = var.azure_tags
-    content {
-      name  = azure_tag.key
-      value = azure_tag.value
+packer {
+  required_plugins {
+    proxmox = {
+      version = "1.2.6"
+      source  = "github.com/nikolai-in/proxmox"
     }
   }
+}
+
+source "proxmox-clone" "image" {
+  proxmox_url              = var.proxmox_url
+  insecure_skip_tls_verify = var.proxmox_insecure
+  username                 = var.proxmox_user
+  password                 = var.proxmox_password
+  node                     = var.node
+
+  clone_vm                = local.image_properties.base_template
+  full_clone              = false
+  vm_id                   = local.image_properties.runner_vm_id
+  vm_name                 = "ubuntu-instance-${formatdate("YYYYMMDD-hhmmss", timestamp())}"
+  template_name           = local.image_properties.runner_template
+  template_description    = "Ubuntu ${var.image_os} Runner VM cloned from base template\nCreated on: ${formatdate("EEE, DD MMM YYYY hh:mm:ss ZZZ", timestamp())}"
+  os                      = "l26"
+  cloud_init              = true
+  cloud_init_storage_pool = var.cloud_init_storage
+
+  memory   = var.memory
+  cores    = var.cores
+  sockets  = var.socket
+  cpu_type = "host"
+  cpu_flags {
+    nested_virt = true
+  }
+  scsi_controller = "virtio-scsi-pci"
+
+  network_adapters {
+    model  = "virtio"
+    bridge = var.bridge
+  }
+
+  disks {
+    storage_pool = var.disk_storage
+    type         = "scsi"
+    disk_size    = local.image_properties.disk_size
+    cache_mode   = "unsafe"
+    format       = "raw"
+    index        = "0"
+  }
+
+  communicator = "ssh"
+  ssh_username = var.install_user
+  ssh_password = var.install_password
+  ssh_timeout  = "1h"
 }
