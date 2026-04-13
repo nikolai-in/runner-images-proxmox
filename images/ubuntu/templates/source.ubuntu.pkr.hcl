@@ -1,7 +1,7 @@
 packer {
   required_plugins {
     proxmox = {
-      version = "1.2.6"
+      version = "1.2.10"
       source  = "github.com/nikolai-in/proxmox"
     }
   }
@@ -23,6 +23,10 @@ source "proxmox-clone" "image" {
   os                      = "l26"
   cloud_init              = true
   cloud_init_storage_pool = var.cloud_init_storage
+  cloud_init_additional_values = {
+    ciuser    = var.install_user
+    ipconfig0 = "ip=dhcp"
+  }
 
   memory   = var.memory
   cores    = var.cores
@@ -48,6 +52,14 @@ source "proxmox-clone" "image" {
   }
 
   communicator = "ssh"
+  ssh_username = var.install_user
+  ssh_password = var.install_password
+  ssh_timeout  = "1h"
+}
+
+source "null" "ssh" {
+  ssh_host     = var.ssh_host
+  ssh_port     = var.ssh_port
   ssh_username = var.install_user
   ssh_password = var.install_password
   ssh_timeout  = "1h"

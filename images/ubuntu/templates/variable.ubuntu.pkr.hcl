@@ -95,6 +95,18 @@ variable "vm_ids" {
   }
 }
 
+variable "base_template_ubuntu22" {
+  type        = string
+  description = "Override base template name for Ubuntu 22.04 runner builds"
+  default     = ""
+}
+
+variable "base_template_ubuntu24" {
+  type        = string
+  description = "Override base template name for Ubuntu 24.04 runner builds"
+  default     = ""
+}
+
 // Image related variables
 variable "helper_script_folder" {
   type    = string
@@ -131,4 +143,16 @@ variable "install_password" {
 variable "install_user" {
   type    = string
   default = "installer"
+}
+
+variable "ssh_host" {
+  type        = string
+  description = "SSH host for resume/debug builds via null source"
+  default     = ""
+}
+
+variable "ssh_port" {
+  type        = number
+  description = "SSH port for resume/debug builds via null source"
+  default     = 22
 }

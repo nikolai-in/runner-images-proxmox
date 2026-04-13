@@ -39,10 +39,23 @@ if (-not $actRunnerAsset) {
     throw "Could not find act_runner Windows AMD64 asset in latest release $($latestRelease.tag_name)"
 }
 
-$actRunnerDir = "C:\ProgramData\act_runner"
+$actRunnerDir = "C:\act_runner"
 New-Item -Path $actRunnerDir -ItemType Directory -Force | Out-Null
 $actRunnerPath = Invoke-DownloadWithRetry -Url $actRunnerAsset.browser_download_url -Path "$actRunnerDir\act_runner.exe"
 
 Write-Output "Gitea Act Runner $($latestRelease.tag_name) cached to $actRunnerPath"
+
+if (-not (Get-Command nssm -ErrorAction SilentlyContinue)) {
+    Write-Output "Installing NSSM"
+    choco install nssm -y --no-progress
+    $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+}
+
+Write-Output "Configuring Gitea Act Runner service via NSSM"
+nssm install act_runner "$actRunnerPath" daemon
+nssm set act_runner AppDirectory "$actRunnerDir"
+nssm set act_runner DisplayName "Gitea Act Runner"
+nssm set act_runner Description "Gitea Act Runner Service"
+nssm set act_runner Start SERVICE_AUTO_START
 
 Invoke-PesterTests -TestFile "RunnerCache"

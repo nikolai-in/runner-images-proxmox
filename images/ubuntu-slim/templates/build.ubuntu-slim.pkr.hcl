@@ -87,6 +87,7 @@ build {
       "${path.root}/../scripts/build/install-zstd.sh",
       "${path.root}/../scripts/build/install-pipx-packages.sh",
       "${path.root}/../scripts/build/install-docker-cli.sh",
+      "${path.root}/../scripts/build/install-act-runner.sh",
       "${path.root}/../scripts/build/configure-system.sh",
       "${path.root}/../scripts/helpers/cleanup.sh"
     ]
