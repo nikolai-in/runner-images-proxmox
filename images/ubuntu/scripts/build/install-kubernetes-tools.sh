@@ -28,7 +28,7 @@ kubectl_minor_version=$(curl -fsSL --retry 5 --retry-delay 10 "https://dl.k8s.io
 
 # Download and validate GPG key
 key_url="https://pkgs.k8s.io/core:/stable:/$kubectl_minor_version/deb/Release.key"
-if curl -fsSL --retry 5 --retry-delay 10 -A "Mozilla/5.0" "$key_url" | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg; then
+if curl -fsSL --retry 5 --retry-delay 10 -A "Mozilla/5.0" "$key_url" | sudo gpg --batch --yes --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg; then
     echo "Key downloaded and stored successfully."
 else
     echo "Failed to download valid GPG key from: $key_url"

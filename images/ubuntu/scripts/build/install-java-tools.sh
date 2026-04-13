@@ -55,7 +55,7 @@ install_open_jdk() {
     touch "${java_toolcache_version_path}/x64.complete"
 
     # Create symlink for Java
-    ln -s ${java_version_path} "${java_toolcache_version_path}/x64"
+    ln -sfn ${java_version_path} "${java_toolcache_version_path}/x64"
 
     # add extra permissions to be able execute command without sudo
     chmod -R 777 /usr/lib/jvm
@@ -92,8 +92,8 @@ set_etc_environment_variable "ANT_HOME" "/usr/share/ant"
 mavenVersion=$(get_toolset_value '.java.maven')
 mavenDownloadUrl="https://dlcdn.apache.org/maven/maven-3/${mavenVersion}/binaries/apache-maven-${mavenVersion}-bin.zip"
 maven_archive_path=$(download_with_retry "$mavenDownloadUrl")
-unzip -qq -d /usr/share "$maven_archive_path"
-ln -s /usr/share/apache-maven-${mavenVersion}/bin/mvn /usr/bin/mvn
+unzip -oq -d /usr/share "$maven_archive_path"
+ln -sfn /usr/share/apache-maven-${mavenVersion}/bin/mvn /usr/bin/mvn
 
 # Install Gradle
 # This script founds the latest gradle release from https://services.gradle.org/versions/all
@@ -104,8 +104,8 @@ gradleDownloadUrl=$(echo ${gradleJson} | jq -r ".[] | select(.version==\"$gradle
 echo "gradleUrl=${gradleDownloadUrl}"
 echo "gradleVersion=${gradleLatestVersion}"
 gradle_archive_path=$(download_with_retry "$gradleDownloadUrl")
-unzip -qq -d /usr/share "$gradle_archive_path"
-ln -s /usr/share/gradle-"${gradleLatestVersion}"/bin/gradle /usr/bin/gradle
+unzip -oq -d /usr/share "$gradle_archive_path"
+ln -sfn /usr/share/gradle-"${gradleLatestVersion}"/bin/gradle /usr/bin/gradle
 gradle_home_dir=$(find /usr/share -depth -maxdepth 1 -name "gradle*")
 set_etc_environment_variable "GRADLE_HOME" "${gradle_home_dir}"
 

@@ -8,7 +8,7 @@
 source $HELPER_SCRIPTS/etc-environment.sh
 
 export NVM_DIR="/etc/skel/.nvm"
-mkdir $NVM_DIR
+mkdir -p $NVM_DIR
 nvm_version=$(curl -fsSL https://api.github.com/repos/nvm-sh/nvm/releases/latest | jq -r '.tag_name')
 curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/$nvm_version/install.sh | bash
 set_etc_environment_variable "NVM_DIR" '$HOME/.nvm'

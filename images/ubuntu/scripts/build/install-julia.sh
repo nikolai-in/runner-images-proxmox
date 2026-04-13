@@ -19,6 +19,6 @@ julia_archive_path=$(download_with_retry "$julia_tar_url")
 julia_installation_path="/usr/local/julia${julia_version}"
 mkdir -p "${julia_installation_path}"
 tar -C "${julia_installation_path}" -xzf "$julia_archive_path" --strip-components=1
-ln -s "${julia_installation_path}/bin/julia" /usr/bin/julia
+ln -sfn "${julia_installation_path}/bin/julia" /usr/bin/julia
 
 invoke_tests "Tools" "Julia"
