@@ -41,7 +41,7 @@ if (-not $actRunnerAsset) {
 
 $actRunnerDir = "C:\act_runner"
 New-Item -Path $actRunnerDir -ItemType Directory -Force | Out-Null
-$actRunnerPath = Invoke-DownloadWithRetry -Url "https://dl.gitea.com/act_runner/$($latestRelease.tag_name)/act_runner-$($latestRelease.tag_name)-windows-amd64.exe" -Path "$actRunnerDir\act_runner.exe"
+$actRunnerPath = Invoke-DownloadWithRetry -Url "https://dl.gitea.com/act_runner/$($latestRelease.tag_name.TrimStart("v"))/act_runner-$($latestRelease.tag_name)-windows-amd64.exe" -Path "$actRunnerDir\act_runner.exe"
 
 Write-Output "Gitea Act Runner $($latestRelease.tag_name) cached to $actRunnerPath"
 
