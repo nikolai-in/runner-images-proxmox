@@ -19,7 +19,6 @@ Historically, Windows Packer templates concluded with a `Sysprep.exe /oobe /gene
 To ensure `cloudbase-init` boots quickly and executes GARM payloads without hanging, the base configuration (`images/windows/assets/base/config/cloudbase-init.conf` and `cloudbase-init-unattend.conf`) was updated:
 - **Metadata scoping**: Removed `HttpService`, `EC2Service`, and `MaaSHttpService` from `metadata_services`. It now exclusively looks for `ConfigDriveService`, preventing 15-minute network timeout hangs during boot.
 - **Plugin enablement**: Added the `UserDataPlugin` to the `plugins` list. Without this, `cloudbase-init` silently ignores the PowerShell scripts injected by GARM.
-- **Deprecation cleanup**: Replaced legacy `logdir` and `logfile` keys with `log-dir` and `log-file`.
 
 ### 4. GARM Proxmox Provider updates
 The `cloud_init.py` logic in the GARM provider was updated to natively support `act_runner` configurations.
