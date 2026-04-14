@@ -1,12 +1,8 @@
-| Announcements |
-|-|
-| [[Windows/Ubuntu] Docker Server and Client will be updated to version 29.1.*, Docker Compose will be updated to version 2.40.3 on February 9th, 2026](https://github.com/actions/runner-images/issues/13474) |
-***
 # Ubuntu 24.04
 - OS Version: 24.04.4 LTS
-- Kernel Version: 6.17.0-1008-azure
-- Image Version: 20260329.72.1
-- Systemd version: 255.4-1ubuntu8.14
+- Kernel Version: 6.8.0-110-generic
+- Image Version: dev
+- Systemd version: 255.4-1ubuntu8.15
 
 ## Installed Software
 
@@ -18,7 +14,7 @@
 - Dash 0.5.12-6ubuntu5
 - GNU C++: 12.4.0, 13.3.0, 14.2.0
 - GNU Fortran: 12.4.0, 13.3.0, 14.2.0
-- Julia 1.12.5
+- Julia 1.12.6
 - Kotlin 2.3.20-release-208
 - Node.js 20.20.2
 - Perl 5.38.2
@@ -28,15 +24,15 @@
 
 ### Package Management
 - cpan 1.64
-- Helm 3.20.1
-- Homebrew 5.1.1
+- Helm 3.20.2
+- Homebrew 5.1.6
 - Miniconda 26.1.1
 - Npm 10.8.2
 - Pip 24.0
 - Pip3 24.0
-- Pipx 1.11.0
+- Pipx 1.11.1
 - RubyGems 3.4.20
-- Vcpkg (build from commit b5d1a94fb7)
+- Vcpkg (build from commit b21ff8f3ca)
 - Yarn 1.22.22
 
 #### Environment variables
@@ -62,15 +58,15 @@ to accomplish this.
 ### Tools
 - Ansible 2.20.4
 - AzCopy 10.32.2 - available by `azcopy` and `azcopy10` aliases
-- Bazel 9.0.1
+- Bazel 9.0.2
 - Bazelisk 1.28.1
-- Bicep 0.41.2
+- Bicep 0.42.1
 - Buildah 1.33.7
 - CMake 3.31.6
 - CodeQL Action Bundle 2.25.1
 - Docker Amazon ECR Credential Helper 0.12.0
 - Docker Compose v2 2.38.2
-- Docker-Buildx 0.32.1
+- Docker-Buildx 0.33.0
 - Docker Client 28.0.4
 - Docker Server 28.0.4
 - Fastlane 2.232.2
@@ -88,11 +84,11 @@ to accomplish this.
 - n 10.2.0
 - Newman 6.2.2
 - nvm 0.40.4
-- OpenSSL 3.0.13-0ubuntu3.7
+- OpenSSL 3.0.13-0ubuntu3.9
 - Packer 1.15.1
 - Parcel 2.16.4
 - Podman 4.9.3
-- Pulumi 3.228.0
+- Pulumi 3.230.0
 - Skopeo 1.13.3
 - Sphinx Open Source Search Server 2.2.11
 - yamllint 1.38.0
@@ -101,13 +97,13 @@ to accomplish this.
 - Ninja 1.13.2
 
 ### CLI Tools
-- AWS CLI 2.34.19
-- AWS CLI Session Manager Plugin 1.2.792.0
-- AWS SAM CLI 1.157.1
-- Azure CLI 2.84.0
+- AWS CLI 2.34.30
+- AWS CLI Session Manager Plugin 1.2.804.0
+- AWS SAM CLI 1.158.0
+- Azure CLI 2.85.0
 - Azure CLI (azure-devops) 1.0.2
 - GitHub CLI 2.89.0
-- Google Cloud CLI 562.0.0
+- Google Cloud CLI 564.0.0
 
 ### Java
 | Version             | Environment Variable |
@@ -142,13 +138,13 @@ Both Xdebug and PCOV extensions are installed, but only Xdebug is enabled.
 - Rustfmt 1.8.0
 
 ### Browsers and Drivers
-- Google Chrome 146.0.7680.164
-- ChromeDriver 146.0.7680.165
-- Chromium 146.0.7680.0
-- Microsoft Edge 146.0.3856.84
-- Microsoft Edge WebDriver 146.0.3856.84
-- Selenium server 4.41.0
-- Mozilla Firefox 149.0
+- Google Chrome 147.0.7727.55
+- ChromeDriver 147.0.7727.56
+- Chromium 147.0.7727.0
+- Microsoft Edge 147.0.3912.60
+- Microsoft Edge WebDriver 147.0.3912.60
+- Selenium server 4.43.0
+- Mozilla Firefox 149.0.2
 - Geckodriver 0.36.0
 
 #### Environment variables
@@ -189,7 +185,7 @@ Use the following command as a part of your job to start the service: 'sudo syst
 - 1.22.12
 - 1.23.12
 - 1.24.13
-- 1.25.8
+- 1.25.9
 
 #### Node.js
 - 20.20.2
@@ -200,8 +196,8 @@ Use the following command as a part of your job to start the service: 'sudo syst
 - 3.10.20
 - 3.11.15
 - 3.12.13
-- 3.13.12
-- 3.14.3
+- 3.13.13
+- 3.14.4
 
 #### PyPy
 - 3.9.19 [PyPy 7.3.16]
@@ -284,7 +280,7 @@ Use the following command as a part of your job to start the service: 'sudo syst
 | jq                     | 1.7.1-3ubuntu0.24.04.1       |
 | libnss3-tools          | 2:3.98-1ubuntu0.1            |
 | libsqlite3-dev         | 3.45.1-1ubuntu2.5            |
-| libssl-dev             | 3.0.13-0ubuntu3.7            |
+| libssl-dev             | 3.0.13-0ubuntu3.9            |
 | libtool                | 2.4.7-7build1                |
 | libyaml-dev            | 0.2.5-1build1                |
 | locales                | 2.39-0ubuntu8.7              |
@@ -302,7 +298,7 @@ Use the following command as a part of your job to start the service: 'sudo syst
 | patchelf               | 0.18.0-1.1build1             |
 | pigz                   | 2.8-1                        |
 | pkg-config             | 1.8.1-2build1                |
-| pollinate              | 4.33-3.1ubuntu1.1            |
+| pollinate              | 4.33-3.1ubuntu1.3            |
 | python-is-python3      | 3.11.4-1                     |
 | rpm                    | 4.18.2+dfsg-2.1build2        |
 | rsync                  | 3.2.7-1ubuntu1.2             |
@@ -313,14 +309,14 @@ Use the following command as a part of your job to start the service: 'sudo syst
 | sshpass                | 1.09-1                       |
 | sudo                   | 1.9.15p5-3ubuntu5.24.04.2    |
 | swig                   | 4.2.0-2ubuntu1               |
-| systemd-coredump       | 255.4-1ubuntu8.14            |
+| systemd-coredump       | 255.4-1ubuntu8.15            |
 | tar                    | 1.35+dfsg-3build1            |
 | telnet                 | 0.17+2.5-3ubuntu4.1          |
 | texinfo                | 7.1-3build2                  |
 | time                   | 1.9-0.2build1                |
 | tk                     | 8.6.14build1                 |
 | tree                   | 2.1.1-2ubuntu3.24.04.2       |
-| tzdata                 | 2025b-0ubuntu0.24.04.1       |
+| tzdata                 | 2026a-0ubuntu0.24.04.1       |
 | unzip                  | 6.0-28ubuntu4.1              |
 | upx                    | 4.2.2-3                      |
 | wget                   | 1.21.4-1ubuntu4.1            |
@@ -328,4 +324,3 @@ Use the following command as a part of your job to start the service: 'sudo syst
 | xz-utils               | 5.6.1+really5.4.5-1ubuntu0.2 |
 | zip                    | 3.0-13ubuntu0.2              |
 | zsync                  | 0.6.2-5build1                |
-

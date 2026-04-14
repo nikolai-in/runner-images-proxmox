@@ -25,6 +25,7 @@ source "proxmox-clone" "image" {
   cloud_init_storage_pool = var.cloud_init_storage
   cloud_init_additional_values = {
     ciuser    = var.install_user
+    cipassword = var.install_password
     ipconfig0 = "ip=dhcp"
   }
 

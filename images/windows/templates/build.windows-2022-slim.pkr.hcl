@@ -262,6 +262,7 @@ build {
   provisioner "powershell" {
     inline = [
       "Set-Service cloudbase-init -StartupType Automatic",
+      "Get-ChildItem -Path 'HKLM:\\SOFTWARE\\Cloudbase Solutions\\Cloudbase-Init' -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue",
       "Write-Output \"Skipping Sysprep for faster CI/CD spin-up time.\""
     ]
   }
