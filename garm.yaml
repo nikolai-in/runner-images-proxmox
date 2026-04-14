@@ -1,0 +1,73 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: garm-config
+    namespace: garm
+type: Opaque
+stringData:
+    config.toml: |-
+        [default]
+        enable_webhook_management = true
+
+        [logging]
+        enable_log_streamer = true
+        log_format = "text"
+        log_level = "info"
+        log_source = false
+
+        [metrics]
+        enable = true
+        disable_auth = false
+
+        [jwt_auth]
+        # Replace with a strong secret
+        secret = "fr1LQOY/KaGtX+KKlIsQieQbuwCSs+hhwOkx/FeV8+g="
+        time_to_live = "8760h"
+
+        [apiserver]
+          bind = "0.0.0.0"
+          port = 80
+          use_tls = false
+          [apiserver.webui]
+            enable = true
+
+        [database]
+          backend = "sqlite3"
+          # Replace with a strong passphrase
+          passphrase = "GERch3fzlarovqWNIrWndMuhbXkq6PqakyFWqf18z90="
+          [database.sqlite3]
+            db_file = "/etc/garm/garm.db"
+
+        [[provider]]
+          name = "proxmox"
+          provider_type = "external"
+          description = "Proxmox VE external provider"
+          [provider.external]
+            provider_executable = "/opt/garm/providers.d/garm-proxmox-provider"
+            config_file = "/etc/garm/garm-provider-proxmox.toml"
+
+    garm-provider-proxmox.toml: |-
+        [pve]
+        host = "https://192.168.80.95:8006/api2/json"
+        user = "garm@pam"
+        token_name = "garm@pam!garm-k8s"
+        token_value = "c6130e4b-f25b-4c30-affd-24f532930a51"
+        verify_ssl = false
+
+        [defaults]
+        node = "beelzebub"
+        storage = "foliant"
+        pool = "garm-runners"
+        template_vmid = 9000
+        cores = 2
+        memory_mb = 4096
+        disk_gb = 20
+        bridge = "vmbr0"
+        ssh_public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIR0cX3ey0bcVcfi2Ku+RW8f0Q5mtP35t4BCDa8d2Zxs"
+        instance_type = "vm"
+        snippets_storage = "local"
+
+        [pool_templates]
+        "ubuntu-slim-runner" = 102
+        "ubuntu-2404-runner" = 105
+        "windows-2022-runner" = 3422
