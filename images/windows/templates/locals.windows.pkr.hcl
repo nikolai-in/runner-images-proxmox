@@ -11,6 +11,7 @@ locals {
   windows_driver_versions = {
     "win22"        = "2k22"
     "win22-slim"   = "2k22"
+    "win22-garm"   = "2k22"
     "win25"        = "2k25"
     "win25-vs2026" = "2k25"
   }
@@ -41,6 +42,20 @@ locals {
       license_key     = var.license_keys.win22
       driver_paths = [
         for driver in local.driver_names : "${driver}\\${local.windows_driver_versions["win22-slim"]}\\amd64"
+      ]
+    },
+    "win22-garm" = {
+      windows_iso     = "en-us_windows_server_2022_eval_x64fre.iso"
+      image_index     = "4"
+      disk_size       = coalesce(var.disk_size_gb, "32G")
+      base_template   = "windows-2022-runner"
+      runner_template = "win22-garm"
+      base_vm_id      = var.vm_ids.win22_runner == 0 ? null : var.vm_ids.win22_runner
+      runner_vm_id    = var.vm_ids.win22_garm_runner == 0 ? null : var.vm_ids.win22_garm_runner
+      # Reuses the win22 license key
+      license_key     = var.license_keys.win22
+      driver_paths = [
+        for driver in local.driver_names : "${driver}\\${local.windows_driver_versions["win22-garm"]}\\amd64"
       ]
     },
     "win25" = {

@@ -11,6 +11,12 @@ locals {
       runner_template = "ubuntu-2404"
       runner_vm_id    = var.vm_ids.ubuntu24_runner == 0 ? null : var.vm_ids.ubuntu24_runner
       disk_size       = coalesce(var.disk_size_gb, "75G")
+    },
+    "ubuntu24-garm" = {
+      base_template   = "ubuntu-2404"
+      runner_template = "ubuntu-2404-garm"
+      runner_vm_id    = var.vm_ids.ubuntu24_garm_runner == 0 ? null : var.vm_ids.ubuntu24_garm_runner
+      disk_size       = coalesce(var.disk_size_gb, "75G")
     }
   }
 

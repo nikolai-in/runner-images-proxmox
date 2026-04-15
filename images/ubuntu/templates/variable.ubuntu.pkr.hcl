@@ -78,13 +78,15 @@ variable "bridge" {
 
 variable "vm_ids" {
   type = object({
-    ubuntu22_runner = number
-    ubuntu24_runner = number
+    ubuntu22_runner      = number
+    ubuntu24_runner      = number
+    ubuntu24_garm_runner = number
   })
   description = "VM IDs for templates. Set to 0 for auto-assignment by Proxmox. VMIDs must be unique cluster-wide and in range 100-999999999."
   default = {
-    ubuntu22_runner = 0
-    ubuntu24_runner = 0
+    ubuntu22_runner      = 0
+    ubuntu24_runner      = 0
+    ubuntu24_garm_runner = 0
   }
   validation {
     condition = alltrue([
@@ -119,8 +121,8 @@ variable "image_folder" {
 variable "image_os" {
   type = string
   validation {
-    condition     = contains(["ubuntu22", "ubuntu24"], var.image_os)
-    error_message = "The image_os value must be one of: ubuntu22, ubuntu24."
+    condition     = contains(["ubuntu22", "ubuntu24", "ubuntu24-garm"], var.image_os)
+    error_message = "The image_os value must be one of: ubuntu22, ubuntu24, ubuntu24-garm."
   }
 }
 variable "image_version" {

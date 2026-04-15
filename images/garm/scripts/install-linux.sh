@@ -19,7 +19,7 @@ echo "==> Pre-installing Gitea act_runner"
 ACT_RUNNER_DIR="/home/runner/act_runner"
 mkdir -p "$ACT_RUNNER_DIR"
 curl -fsSL -o "$ACT_RUNNER_DIR/act_runner" \
-    "https://gitea.com/gitea/act_runner/releases/download/v${ACT_RUNNER_VERSION}/act_runner-v${ACT_RUNNER_VERSION}-linux-${TARGET_ARCH}"
+    "https://gitea.com/gitea/act_runner/releases/download/v${ACT_RUNNER_VERSION}/act_runner-${ACT_RUNNER_VERSION}-linux-${TARGET_ARCH}"
 chmod +x "$ACT_RUNNER_DIR/act_runner"
 chown -R runner:runner "$ACT_RUNNER_DIR"
 
@@ -38,7 +38,7 @@ chown -R runner:runner "$GH_RUNNER_DIR"
 
 echo "==> Pre-installing garm-agent"
 curl -fsSL -o /usr/local/bin/garm-agent \
-    "https://github.com/cloudbase/garm/releases/download/${GARM_AGENT_VERSION}/garm-agent-linux-${TARGET_ARCH}"
+    "https://github.com/cloudbase/garm-agent/releases/download/v0.1.0-beta1/garm-agent-linux-${TARGET_ARCH}-v0.1.0-beta1"
 chmod +x /usr/local/bin/garm-agent
 
 echo "==> Preparing garm-agent systemd structure"

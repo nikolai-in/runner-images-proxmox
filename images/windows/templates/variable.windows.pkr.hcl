@@ -153,6 +153,7 @@ variable "vm_ids" {
     win22_base          = number
     win22_runner        = number
     win22_slim_runner   = number
+    win22_garm_runner   = number
     win25_base          = number
     win25_runner        = number
     win25_vs2026_runner = number
@@ -162,6 +163,7 @@ variable "vm_ids" {
     win22_base          = 0
     win22_runner        = 0
     win22_slim_runner   = 0
+    win22_garm_runner   = 0
     win25_base          = 0
     win25_runner        = 0
     win25_vs2026_runner = 0
@@ -178,8 +180,8 @@ variable "vm_ids" {
 variable "image_os" {
   type = string
   validation {
-    condition     = contains(["win22", "win22-slim", "win25", "win25-vs2026"], var.image_os)
-    error_message = "The image_os value must be one of: win22, win22-slim, win25, win25-vs2026."
+    condition     = contains(["win22", "win22-slim", "win22-garm", "win25", "win25-vs2026"], var.image_os)
+    error_message = "The image_os value must be one of: win22, win22-slim, win22-garm, win25, win25-vs2026."
   }
 }
 
