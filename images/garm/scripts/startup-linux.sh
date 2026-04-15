@@ -17,6 +17,10 @@ set -euo pipefail
 
 RUNNER_NAME="${RUNNER_NAME:-}"
 
+if [[ "${CALLBACK_URL}" != */status ]]; then
+    CALLBACK_URL="${CALLBACK_URL}/status"
+fi
+
 function send_status() {
     local status="$1"
     local message="$2"
@@ -24,7 +28,7 @@ function send_status() {
     curl -fsSL -X POST -d "$payload" \
         -H "Accept: application/json" \
         -H "Authorization: Bearer ${BEARER_TOKEN}" \
-        "${CALLBACK_URL}/status" || true
+        "${CALLBACK_URL}" || true
 }
 
 function fail() {
@@ -102,11 +106,12 @@ OS_VERSION=$(source /etc/os-release && echo "$VERSION_ID")
 AGENT_ID=$(grep '"id"' "${RUNNER_HOME}/.runner" 2>/dev/null | tr -d -c 0-9 || echo "null")
 
 if [ "$AGENT_ID" != "null" ]; then
+    SYSINFO_URL="${CALLBACK_URL%/status}/system-info/"
     SYSINFO_PAYLOAD="{\"os_name\": \"$OS_NAME\", \"os_version\": \"$OS_VERSION\", \"agent_id\": $AGENT_ID}"
     curl -fsSL -X POST -d "$SYSINFO_PAYLOAD" \
         -H "Accept: application/json" \
         -H "Authorization: Bearer ${BEARER_TOKEN}" \
-        "${CALLBACK_URL}/system-info/" || true
+        "${SYSINFO_URL}" || true
 fi
 
 send_status "idle" "Runner successfully configured and started"
