@@ -29,4 +29,15 @@ build {
       "/opt/garm/scripts/install-linux.sh"
     ]
   }
+
+  provisioner "shell" {
+    execute_command = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
+    inline = [
+      "if [ -x /usr/sbin/waagent ]; then /usr/sbin/waagent -force -deprovision+user; elif command -v cloud-init >/dev/null 2>&1; then cloud-init clean --logs --seed; fi",
+      "rm -rf /var/lib/cloud/",
+      "rm -f /etc/machine-id",
+      "touch /etc/machine-id",
+      "export HISTSIZE=0 && sync"
+    ]
+  }
 }
