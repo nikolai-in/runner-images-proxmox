@@ -58,7 +58,23 @@ if [ "${FORGE_TYPE:-github}" = "gitea" ]; then
         --labels '${RUNNER_LABELS}' \
         --no-interactive" || fail "Failed to register act_runner"
 
-    sed -i 's/act_runner daemon/act_runner daemon --config config.yaml/' /etc/systemd/system/act_runner.service || true
+    cat > /etc/systemd/system/act_runner.service << EOF
+[Unit]
+Description=Gitea Actions runner
+After=network.target
+
+[Service]
+ExecStart=/home/runner/act_runner/act_runner daemon --config /home/runner/act_runner/config.yaml
+WorkingDirectory=/home/runner/act_runner
+User=runner
+Group=runner
+Restart=always
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
     systemctl daemon-reload
     systemctl enable --now act_runner
 else
