@@ -5,7 +5,7 @@
 ***
 # Windows Server 2022
 - OS Version: 10.0.20348 Build 4893
-- Image Version: 20260329.98.1
+- Image Version: 20260413.111.1
 
 ## Windows features
 - Windows Subsystem for Linux (WSLv1): Enabled
@@ -20,21 +20,21 @@
 - LLVM 20.1.8
 - Node 20.20.2
 - Perl 5.32.1
-- PHP 8.5.4
+- PHP 8.5.5
 - Python 3.12.10
 - Ruby 3.3.11
 
 ### Package Management
-- Chocolatey 2.7.0
+- Chocolatey 2.7.1
 - Composer 2.9.5
 - Helm 4.1.3
 - Miniconda 26.1.1 (pre-installed on the image but not added to PATH)
 - NPM 10.8.2
 - NuGet 7.3.0.70
 - pip 26.0.1 (python 3.12)
-- Pipx 1.11.0
+- Pipx 1.11.1
 - RubyGems 3.5.22
-- Vcpkg (build from commit b5d1a94fb7)
+- Vcpkg (build from commit b80e006657)
 - Yarn 1.22.22
 
 #### Environment variables
@@ -44,18 +44,18 @@
 | CONDA                   | C:\Miniconda |
 
 ### Project Management
-- Ant 1.10.15
+- Ant 1.10.16
 - Gradle 9.4
 - Maven 3.9.14
-- sbt 1.12.8
+- sbt 1.12.9
 
 ### Tools
 - 7zip 26.00
 - aria2 1.37.0
 - azcopy 10.32.2
-- Bazel 9.0.1
+- Bazel 9.0.2
 - Bazelisk 1.28.1
-- Bicep 0.41.2
+- Bicep 0.42.1
 - Cabal 3.16.1.0
 - CMake 3.31.6
 - CodeQL Action Bundle 2.25.1
@@ -76,9 +76,9 @@
 - GNU Binutils 2.44
 - Newman 6.2.2
 - NSIS 3.10
-- OpenSSL 3.6.1
+- OpenSSL 3.6.2
 - Packer 1.15.0
-- Pulumi 3.228.0
+- Pulumi 3.230.0
 - R 4.5.3
 - Service Fabric SDK 10.1.2493.9590
 - Stack 3.9.3
@@ -92,11 +92,11 @@
 - Ninja 1.13.2
 
 ### CLI Tools
-- Alibaba Cloud CLI 3.3.3
-- AWS CLI 2.34.19
-- AWS SAM CLI 1.157.1
-- AWS Session Manager CLI 1.2.792.0
-- Azure CLI 2.84.0
+- Alibaba Cloud CLI 3.3.4
+- AWS CLI 2.34.27
+- AWS SAM CLI 1.158.0
+- AWS Session Manager CLI 1.2.804.0
+- Azure CLI 2.85.0
 - Azure DevOps CLI extension 1.0.2
 - GitHub CLI 2.89.0
 
@@ -109,20 +109,20 @@
 #### Packages
 - bindgen 0.72.1
 - cargo-audit 0.22.1
-- cargo-outdated 0.17.0
+- cargo-outdated 0.18.0
 - cbindgen 0.29.2
 - Clippy 0.1.94
 - Rustfmt 1.8.0
 
 ### Browsers and Drivers
-- Google Chrome 146.0.7680.165
-- Chrome Driver 146.0.7680.165
-- Microsoft Edge 146.0.3856.84
-- Microsoft Edge Driver 146.0.3856.84
-- Mozilla Firefox 149.0
+- Google Chrome 147.0.7727.56
+- Chrome Driver 147.0.7727.56
+- Microsoft Edge 147.0.3912.60
+- Microsoft Edge Driver 147.0.3912.60
+- Mozilla Firefox 149.0.2
 - Gecko Driver 0.36.0
 - IE Driver 4.14.0.0
-- Selenium server 4.41.0
+- Selenium server 4.43.0
 
 #### Environment variables
 | Name              | Value                              |
@@ -164,7 +164,7 @@ Note: MSYS2 is pre-installed on image but not added to PATH.
 - 1.22.12
 - 1.23.12
 - 1.24.13
-- 1.25.8
+- 1.25.9
 
 #### Node.js
 - 20.20.2
@@ -175,8 +175,8 @@ Note: MSYS2 is pre-installed on image but not added to PATH.
 - 3.10.11
 - 3.11.9
 - 3.12.10
-- 3.13.12
-- 3.14.3
+- 3.13.13
+- 3.14.4
 
 #### PyPy
 - 2.7.18 [PyPy 7.3.21]
@@ -223,7 +223,7 @@ Note: MSYS2 is pre-installed on image but not added to PATH.
 | Name   | Version | ConfigFile                            | ServiceName | ServiceStatus | ListenPort |
 | ------ | ------- | ------------------------------------- | ----------- | ------------- | ---------- |
 | Apache | 2.4.55  | C:\tools\Apache24\conf\httpd.conf     | Apache      | Stopped       | 80         |
-| Nginx  | 1.29.7  | C:\tools\nginx-1.29.7\conf\nginx.conf | nginx       | Stopped       | 80         |
+| Nginx  | 1.29.8  | C:\tools\nginx-1.29.8\conf\nginx.conf | nginx       | Stopped       | 80         |
 
 ### Visual Studio Enterprise 2022
 | Name                          | Version        | Path                                                     |
@@ -242,7 +242,7 @@ Note: MSYS2 is pre-installed on image but not added to PATH.
 | Component.MDD.Android                                                     | 17.14.36804.6   |
 | Component.MDD.Linux                                                       | 17.14.36510.44  |
 | Component.Microsoft.VisualStudio.RazorExtension                           | 17.14.36510.44  |
-| Component.Microsoft.VisualStudio.Tools.Applications.amd64                 | 17.0.36522.0    |
+| Component.Microsoft.VisualStudio.Tools.Applications.amd64                 | 17.1.37110.1    |
 | Component.Microsoft.VisualStudio.Web.AzureFunctions                       | 17.14.36510.44  |
 | Component.Microsoft.Web.LibraryManager                                    | 17.14.36510.44  |
 | Component.Microsoft.WebTools.BrowserLink.WebLivePreview                   | 17.14.2.50506   |
@@ -455,7 +455,7 @@ Note: MSYS2 is pre-installed on image but not added to PATH.
 | wasm.tools                                                                | 9.0.1426.11910  |
 | ProBITools.MicrosoftAnalysisServicesModelingProjects2022                  | 4.0.0           |
 | ProBITools.MicrosoftReportProjectsforVisualStudio2022                     | 4.0.0           |
-| SSIS.MicrosoftDataToolsIntegrationServices                                | 2.1.2           |
+| SSIS.MicrosoftDataToolsIntegrationServices                                | 2.2             |
 | VisualStudioClient.MicrosoftVisualStudio2022InstallerProjects             | 3.0.0           |
 | Windows Driver Kit                                                        | 10.1.26100.4202 |
 | Windows Driver Kit Visual Studio Extension                                | 10.0.26100.16   |
@@ -493,7 +493,7 @@ Note: MSYS2 is pre-installed on image but not added to PATH.
 
 #### Powershell Modules
 - Az: 14.6.0
-- AWSPowershell: 5.0.184
+- AWSPowershell: 5.0.195
 - DockerMsftProvider: 1.0.0.8
 - MarkdownPS: 1.10
 - Microsoft.Graph: 2.36.1
@@ -508,7 +508,7 @@ Note: MSYS2 is pre-installed on image but not added to PATH.
 | Package Name               | Version                                                                                                                                                                                                                                                                                                                                                             |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Android Command Line Tools | 8.0                                                                                                                                                                                                                                                                                                                                                                 |
-| Android Emulator           | 36.4.10                                                                                                                                                                                                                                                                                                                                                             |
+| Android Emulator           | 36.5.10                                                                                                                                                                                                                                                                                                                                                             |
 | Android SDK Build-tools    | 37.0.0<br>36.0.0 36.1.0<br>35.0.0 35.0.1<br>34.0.0<br>32.0.0                                                                                                                                                                                                                                                                                                        |
 | Android SDK Platforms      | android-37.0 (rev 1)<br>android-36.1 (rev 1)<br>android-36-ext19 (rev 1)<br>android-36-ext18 (rev 1)<br>android-36 (rev 2)<br>android-35-ext15 (rev 1)<br>android-35-ext14 (rev 1)<br>android-35 (rev 2)<br>android-34-ext8 (rev 1)<br>android-34-ext12 (rev 1)<br>android-34-ext11 (rev 1)<br>android-34-ext10 (rev 1)<br>android-34 (rev 3)<br>android-33 (rev 3) |
 | Android SDK Platform-Tools | 37.0.0                                                                                                                                                                                                                                                                                                                                                              |
