@@ -144,7 +144,7 @@ variable "install_password" {
 }
 variable "install_user" {
   type    = string
-  default = "installer"
+  default = "runner"
 }
 
 variable "ssh_host" {
