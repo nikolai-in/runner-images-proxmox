@@ -121,8 +121,8 @@ variable "image_folder" {
 variable "image_os" {
   type = string
   validation {
-    condition     = contains(["ubuntu22", "ubuntu24", "ubuntu24-garm"], var.image_os)
-    error_message = "The image_os value must be one of: ubuntu22, ubuntu24, ubuntu24-garm."
+    condition     = contains(["ubuntu22", "ubuntu24", "ubuntu-nobel-garm"], var.image_os)
+    error_message = "The image_os value must be one of: ubuntu22, ubuntu24, ubuntu-nobel-garm."
   }
 }
 variable "image_version" {
