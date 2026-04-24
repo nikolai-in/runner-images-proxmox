@@ -27,6 +27,24 @@ build {
     ]
   }
 
+  # Ensure runner is added to docker group after both exist
+  provisioner "shell" {
+    execute_command = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
+    inline = [
+      "if id runner >/dev/null 2>&1 && getent group docker >/dev/null 2>&1; then usermod -aG docker runner; fi"
+    ]
+  }
+
+  # Symlink act_runner cache to GitHub actions cache directory for compatibility
+  provisioner "shell" {
+    execute_command = "sudo -u runner sh -c '{{ .Vars }} {{ .Path }}'"
+    inline = [
+      "mkdir -p /home/runner/.cache",
+      "if [ ! -e /home/runner/.cache/act ]; then ln -s /opt/actionarchivecache /home/runner/.cache/act; fi",
+      "chown -h runner:runner /home/runner/.cache/act"
+    ]
+  }
+
   provisioner "shell" {
     execute_command = "sudo sh -c '{{ .Vars }} {{ .Path }}'"
     inline = [
